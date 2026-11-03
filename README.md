@@ -1,4 +1,4 @@
-# Track 5 – Port Louis–Curepipe Corridor Simulator (working title)
+# SmartMove – Port Louis–Curepipe Corridor Simulator
 
 > **Status:** prototype built for Tech Wave – AI Hackathon Mauritius 2026 (Track 5: Traffic and Metro Express optimisation).
 > This is a research prototype. It is **not** an official planning or timetable tool.
@@ -50,7 +50,10 @@ outputs/                  charts and result tables
 Listed with access date and licence in `docs/data_audit.md`. Every dataset, model and API used must appear there.
 
 ## Team
-Add names and roles here.
+Mihivar Luchoomun,
+Trishen Naidoo,
+Suyash Balluck,
+Nikhil Gopaul.
 
 ## Limitations
 To be completed with final results. Draft limits: peak slowdown is a scenario parameter, assumed behaviour parameters,
