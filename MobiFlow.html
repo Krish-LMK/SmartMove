@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MobiFlow Mauritius | Request a Ride, Carpool & Smart Routes</title>
+  
+  <!-- Premium Geometric Typography (Uber Move aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --uber-black: #000000;
+      --uber-dark: #121212;
+      --uber-card-dark: #1A1A1A;
+      --uber-card-border: #2C2C2C;
+      --uber-gray-50: #F6F6F6;
+      --uber-gray-100: #EEEEEE;
+      --uber-gray-200: #E2E2E2;
+      --uber-gray-400: #A6A6A6;
+      --uber-gray-600: #545454;
+      --uber-white: #FFFFFF;
+      --electric-green: #06C167; /* Uber Green */
+      --electric-green-glow: rgba(6, 193, 103, 0.2);
+      --electric-blue: #276EF1;
+      --danger-red: #E11900;
+      --warning-amber: #FFC043;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 500px;
+      --shadow-uber: 0 14px 40px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.16);
+      --transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--uber-white);
+      color: var(--uber-black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Utility Strip */
+    .uber-topbar {
+      background: var(--uber-black);
+      color: var(--uber-gray-400);
+      font-size: 0.78rem;
+      padding: 9px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1f1f1f;
+    }
+    .uber-topbar strong { color: var(--uber-white); }
+    .corridor-pill {
+      background: #1e1e1e;
+      color: var(--electric-green);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-weight: 600;
+      font-size: 0.72rem;
+      border: 1px solid #333;
+    }
+
+    /* Uber Style Navigation */
+    header.uber-header {
+      background: var(--uber-black);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0 28px;
+    }
+
+    .nav-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .uber-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .brand-logo-uber {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--uber-white);
+      letter-spacing: -0.04em;
+    }
+    .brand-logo-uber span {
+      color: var(--electric-green);
+      font-weight: 400;
+    }
+
+    .uber-nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--uber-gray-400);
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--uber-white);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-tab-btn.active {
+      color: var(--uber-black);
+      background: var(--uber-white);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-pill-light {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--uber-white);
+      border: none;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-pill-light:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .btn-pill-green {
+      background: var(--electric-green);
+      color: var(--uber-black);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-pill-green:hover {
+      background: #05a758;
+      transform: translateY(-1px);
+    }
+
+    .mobile-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--uber-white);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    /* Mobile Drawer */
+    .mobile-drawer {
+      display: none;
+      background: var(--uber-dark);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--uber-card-border);
+    }
+    .mobile-drawer.open { display: block; }
+    .mobile-drawer .nav-tab-btn {
+      width: 100%;
+      color: var(--uber-white);
+      justify-content: flex-start;
+      margin-bottom: 4px;
+    }
+
+    /* Main Container */
+    main.uber-main {
+      flex: 1;
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 32px 28px 70px 28px;
+    }
+
+    .module-view {
+      display: none;
+      animation: uberFade 0.22s ease forwards;
+    }
+    .module-view.active { display: block; }
+
+    @keyframes uberFade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========================================================
+       UBER HERO & RIDE BOOKING PANEL
+       ======================================================== */
+    .uber-hero-grid {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+      align-items: stretch;
+    }
+
+    .uber-booking-card {
+      background: var(--uber-white);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-uber);
+      border: 1px solid var(--uber-gray-200);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .booking-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--uber-black);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 22px;
+    }
+
+    /* Uber Route Connector (Dot + Line + Square) */
+    .route-connector-wrapper {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .route-connector-line {
+      position: absolute;
+      left: 19px;
+      top: 26px;
+      bottom: 26px;
+      width: 2px;
+      background: var(--uber-black);
+      z-index: 1;
+    }
+
+    .location-input-row {
+      position: relative;
+      margin-bottom: 12px;
+      z-index: 2;
+    }
+    .location-input-row:last-child { margin-bottom: 0; }
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      background: var(--uber-black);
+    }
+    .input-icon.circle { border-radius: 50%; }
+    .input-icon.square { border-radius: 0; }
+
+    .uber-input {
+      width: 100%;
+      background: var(--uber-gray-50);
+      border: 1px solid transparent;
+      padding: 14px 16px 14px 40px;
+      border-radius: var(--radius-sm);
+      font-size: 0.94rem;
+      font-weight: 500;
+      color: var(--uber-black);
+      outline: none;
+      transition: var(--transition);
+    }
+    .uber-input:focus {
+      background: var(--uber-white);
+      border-color: var(--uber-black);
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .booking-inline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0 20px 0;
+    }
+
+    .uber-select-wrap {
+      position: relative;
+    }
+    .uber-select-wrap select {
+      width: 100%;
+      background: var(--uber-gray-50);
+      border: 1px solid transparent;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--uber-black);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+    .uber-select-wrap::after {
+      content: "\f078";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 0.72rem;
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: var(--uber-gray-600);
+    }
+
+    .btn-uber-black {
+      width: 100%;
+      background: var(--uber-black);
+      color: var(--uber-white);
+      border: none;
+      padding: 15px;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-uber-black:hover {
+      background: #222222;
+      transform: translateY(-1px);
+    }
+
+    /* Right Hero Visual / Map Integration */
+    .uber-hero-map-wrapper {
+      background: var(--uber-gray-50);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--uber-gray-200);
+      overflow: hidden;
+      min-height: 480px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #heroInteractiveMap {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+    }
+
+    .map-floating-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 5;
+    }
+
+    .map-floating-meta strong {
+      font-size: 0.92rem;
+      color: var(--uber-black);
+    }
+    .map-floating-meta p {
+      font-size: 0.8rem;
+      color: var(--uber-gray-600);
+      margin-top: 2px;
+    }
+
+    /* Uber Ride Tier Options */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      color: var(--uber-black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .uber-tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+
+    .tier-card {
+      background: var(--uber-gray-50);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 22px 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .tier-card:hover {
+      border-color: var(--uber-black);
+      background: var(--uber-white);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-uber);
+    }
+    .tier-card.selected {
+      border-color: var(--uber-black);
+      background: var(--uber-white);
+    }
+
+    .tier-icon-wrap {
+      font-size: 2.2rem;
+      color: var(--uber-black);
+      margin-bottom: 14px;
+    }
+    .tier-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--uber-black);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tier-cap {
+      font-size: 0.78rem;
+      color: var(--uber-gray-600);
+      font-weight: 600;
+    }
+    .tier-desc {
+      font-size: 0.82rem;
+      color: var(--uber-gray-600);
+      margin: 6px 0 14px 0;
+      line-height: 1.4;
+    }
+    .tier-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--uber-black);
+    }
+    .tier-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--electric-green);
+      color: var(--uber-black);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+
+    /* Search Results Ride List */
+    .ride-match-card {
+      background: var(--uber-white);
+      border: 1px solid var(--uber-gray-200);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      margin-bottom: 14px;
+      transition: var(--transition);
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+    .ride-match-card:hover {
+      border-color: var(--uber-black);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .match-avatar {
+      width: 70px;
+      height: 70px;
+      background: var(--uber-gray-100);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--uber-black);
+      position: relative;
+    }
+    .verified-check {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--electric-green);
+      color: var(--uber-black);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      border: 2px solid #FFF;
+    }
+
+    .match-info h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--uber-black);
+      margin-bottom: 4px;
+    }
+    .match-sub {
+      font-size: 0.84rem;
+      color: var(--uber-gray-600);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .match-corridor-flow {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--uber-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .match-action {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .match-price {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--uber-black);
+    }
+    .match-price small {
+      font-size: 0.78rem;
+      color: var(--uber-gray-600);
+      font-weight: 500;
+    }
+
+    /* Driver & Admin Panels */
+    .uber-card-white {
+      background: var(--uber-white);
+      border: 1px solid var(--uber-gray-200);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-uber);
+    }
+
+    .uber-card-dark {
+      background: var(--uber-dark);
+      color: var(--uber-white);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+    }
+
+    .uber-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .form-label-uber {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--uber-gray-600);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-badge {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+    .status-badge.confirmed { background: rgba(6, 193, 103, 0.15); color: #038a45; }
+    .status-badge.pending { background: rgba(255, 192, 67, 0.2); color: #9A6800; }
+    .status-badge.rejected { background: rgba(225, 25, 0, 0.12); color: var(--danger-red); }
+
+    /* Modern Table */
+    .uber-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .uber-table th {
+      text-align: left;
+      padding: 14px;
+      color: var(--uber-gray-600);
+      border-bottom: 2px solid var(--uber-gray-100);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .uber-table td {
+      padding: 16px 14px;
+      border-bottom: 1px solid var(--uber-gray-100);
+      color: var(--uber-black);
+    }
+
+    /* Modals & Toasts */
+    .uber-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .uber-modal-backdrop.open { display: flex; }
+    .uber-modal-box {
+      background: var(--uber-white);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      padding: 32px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    }
+
+    .uber-toast-container {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .uber-toast {
+      background: var(--uber-black);
+      color: var(--uber-white);
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-hover);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 320px;
+      border-left: 5px solid var(--electric-green);
+    }
+
+    /* Footer */
+    footer.uber-footer {
+      background: var(--uber-black);
+      color: var(--uber-gray-400);
+      padding: 50px 28px 30px 28px;
+      margin-top: auto;
+      border-top: 1px solid #1a1a1a;
+    }
+    .footer-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .uber-hero-grid { grid-template-columns: 1fr; }
+      .uber-tier-grid { grid-template-columns: 1fr 1fr; }
+      .uber-grid-2 { grid-template-columns: 1fr; }
+      .uber-nav-menu { display: none; }
+      .mobile-hamburger { display: block; }
+    }
+
+    @media (max-width: 640px) {
+      .uber-tier-grid { grid-template-columns: 1fr; }
+      .ride-match-card { grid-template-columns: 1fr; text-align: left; }
+      .match-action { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Corridor & Status -->
+  <div class="uber-topbar">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span class="corridor-pill"><i class="fa-solid fa-location-arrow"></i> PORT LOUIS CORRIDOR</span>
+      <span>Port Louis &bull; Rose Hill &bull; Quatre Bornes &bull; Vacoas &bull; Curepipe</span>
+    </div>
+    <div style="font-size: 0.74rem;">
+      <span style="color: var(--electric-green);"><i class="fa-solid fa-bolt"></i> Google Maps Live</span> &bull; Currency: <strong>MUR</strong>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="uber-header">
+    <div class="nav-inner">
+      <div class="brand-section">
+        <div class="uber-brand" onclick="switchView('home')">
+          <span class="brand-logo-uber">MOBI<span>FLOW</span></span>
+        </div>
+
+        <ul class="uber-nav-menu">
+          <li><button class="nav-tab-btn active" data-target="home"><i class="fa-solid fa-car"></i> Ride</button></li>
+          <li><button class="nav-tab-btn" data-target="offerRide"><i class="fa-solid fa-id-card"></i> Drive & Offer</button></li>
+          <li><button class="nav-tab-btn" data-target="smartRoutes"><i class="fa-solid fa-map-location-dot"></i> Smart Routes</button></li>
+          <li><button class="nav-tab-btn" data-target="ecoMobility"><i class="fa-solid fa-bicycle"></i> 2-Wheels</button></li>
+          <li><button class="nav-tab-btn" data-target="freight"><i class="fa-solid fa-truck"></i> Freight</button></li>
+          <li><button class="nav-tab-btn" data-target="safety"><i class="fa-solid fa-shield-halved"></i> Safety</button></li>
+          <li><button class="nav-tab-btn" data-target="admin"><i class="fa-solid fa-chart-simple"></i> Analytics</button></li>
+        </ul>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-pill-light" onclick="switchView('offerRide')">Become a Driver</button>
+        <button class="btn-pill-green" onclick="switchView('home')">Request a Ride</button>
+        <button class="mobile-hamburger" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-drawer" id="mobileDrawer">
+      <button class="nav-tab-btn" data-target="home"><i class="fa-solid fa-car"></i> Ride & Carpool</button>
+      <button class="nav-tab-btn" data-target="offerRide"><i class="fa-solid fa-id-card"></i> Driver Dashboard</button>
+      <button class="nav-tab-btn" data-target="smartRoutes"><i class="fa-solid fa-map-location-dot"></i> Smart Routes</button>
+      <button class="nav-tab-btn" data-target="ecoMobility"><i class="fa-solid fa-bicycle"></i> Eco Bikes</button>
+      <button class="nav-tab-btn" data-target="freight"><i class="fa-solid fa-truck"></i> Freight Planning</button>
+      <button class="nav-tab-btn" data-target="safety"><i class="fa-solid fa-shield-halved"></i> Safety Centre</button>
+      <button class="nav-tab-btn" data-target="admin"><i class="fa-solid fa-chart-simple"></i> Analytics</button>
+    </div>
+  </header>
+
+  <!-- Main Views -->
+  <main class="uber-main">
+
+    <!-- ==================== VIEW 1: HOME & PASSENGER SEARCH ==================== -->
+    <section id="view-home" class="module-view active">
+      <div class="uber-hero-grid">
+        <!-- Uber Classic Request Widget -->
+        <div class="uber-booking-card">
+          <div>
+            <h1 class="booking-title">Go anywhere in Mauritius</h1>
+
+            <!-- Connected Route Inputs -->
+            <div class="route-connector-wrapper">
+              <div class="route-connector-line"></div>
+              
+              <div class="location-input-row">
+                <span class="input-icon circle"></span>
+                <select id="pPickup" class="uber-input" onchange="syncHeroRoute()">
+                  <option value="Curepipe">Curepipe (Jan Palach Station)</option>
+                  <option value="Vacoas">Vacoas (Central Station)</option>
+                  <option value="Quatre Bornes">Quatre Bornes (St Jean)</option>
+                  <option value="Rose Hill">Rose Hill (Plaza & Metro)</option>
+                  <option value="Ebene">Ebene Cybercity (BPML)</option>
+                  <option value="Port Louis">Port Louis (Victoria Terminal)</option>
+                </select>
+              </div>
+
+              <div class="location-input-row">
+                <span class="input-icon square"></span>
+                <select id="pDropoff" class="uber-input" onchange="syncHeroRoute()">
+                  <option value="Port Louis" selected>Port Louis (Victoria Terminal / Caudan)</option>
+                  <option value="Ebene">Ebene Cybercity</option>
+                  <option value="Rose Hill">Rose Hill</option>
+                  <option value="Quatre Bornes">Quatre Bornes</option>
+                  <option value="Vacoas">Vacoas</option>
+                  <option value="Curepipe">Curepipe</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Time & Passenger Selection -->
+            <div class="booking-inline-grid">
+              <div class="uber-select-wrap">
+                <select id="pTime" onchange="filterRides()">
+                  <option value="07:30">Departs 07:30 AM</option>
+                  <option value="07:45" selected>Departs 07:45 AM</option>
+                  <option value="08:00">Departs 08:00 AM</option>
+                  <option value="08:15">Departs 08:15 AM</option>
+                  <option value="17:15">Departs 17:15 PM</option>
+                </select>
+              </div>
+
+              <div class="uber-select-wrap">
+                <select id="pSeats">
+                  <option value="1">1 Passenger</option>
+                  <option value="2">2 Passengers</option>
+                  <option value="3">3 Passengers</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button class="btn-uber-black" onclick="searchRidesAction()">
+              <span>Search Verified Drivers</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <div style="font-size: 0.74rem; color: var(--uber-gray-600); text-align: center; margin-top: 10px;">
+              Fixed transparent contribution &bull; No surge pricing
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Maps Interactive Preview -->
+        <div class="uber-hero-map-wrapper">
+          <div id="heroInteractiveMap"></div>
+          
+          <div class="map-floating-overlay">
+            <div class="map-floating-meta">
+              <strong id="overlayRouteTitle">Curepipe &rarr; Port Louis Corridor</strong>
+              <p id="overlayRouteDuration">Calculating via Google Directions API...</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <span class="status-badge confirmed"><i class="fa-solid fa-shield"></i> NLTA Checked</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Tiers (Uber Style) -->
+      <div class="section-title">
+        <span>Suggested Ride Options along Plaines Wilhems</span>
+        <small style="font-size: 0.85rem; color: var(--uber-gray-600); font-weight: 500;">Pilot Launch Corridor</small>
+      </div>
+
+      <div class="uber-tier-grid">
+        <div class="tier-card selected" onclick="selectTier(this, 'Go')">
+          <span class="tier-badge">Popular</span>
+          <div class="tier-icon-wrap"><i class="fa-solid fa-car-side"></i></div>
+          <div class="tier-name">MobiFlow Go <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
+          <div class="tier-desc">Affordable everyday carpool in clean hybrid hatchbacks (Toyota Aqua, Fit).</div>
+          <div class="tier-price">50 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(this, 'Green')">
+          <span class="tier-badge" style="background: #000; color: #FFF;">Zero Emission</span>
+          <div class="tier-icon-wrap" style="color: var(--electric-green);"><i class="fa-solid fa-leaf"></i></div>
+          <div class="tier-name">MobiFlow Green <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
+          <div class="tier-desc">100% Electric vehicles (Nissan Leaf, BYD Atto 3) reducing Mauritius carbon footprint.</div>
+          <div class="tier-price">55 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(this, 'Comfort')">
+          <div class="tier-icon-wrap"><i class="fa-solid fa-car"></i></div>
+          <div class="tier-name">Comfort <span class="tier-cap"><i class="fa-solid fa-user"></i> 4</span></div>
+          <div class="tier-desc">Spacious sedans with premium legroom and guaranteed trunk storage space.</div>
+          <div class="tier-price">65 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(this, 'Express')">
+          <div class="tier-icon-wrap"><i class="fa-solid fa-van-shuttle"></i></div>
+          <div class="tier-name">Metro Feeder <span class="tier-cap"><i class="fa-solid fa-user"></i> 6</span></div>
+          <div class="tier-desc">Shared shuttle connecting remote residential pockets to Rose Hill Metro Express.</div>
+          <div class="tier-price">35 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
+        </div>
+      </div>
+
+      <!-- Live Matching Drivers Feed -->
+      <div class="section-title">
+        <span>Available Drivers on Your Route (<span id="matchResultsCount">0</span>)</span>
+      </div>
+
+      <div id="matchingDriversList">
+        <!-- Populated via JavaScript Matching Engine -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: DRIVER DASHBOARD ==================== -->
+    <section id="view-offerRide" class="module-view">
+      <div class="section-title">
+        <span>Driver Dashboard: Offer Seats & Reduce Traffic</span>
+        <button class="btn-pill-green" onclick="showDriverRegisterModal()"><i class="fa-solid fa-plus"></i> Register New Vehicle</button>
+      </div>
+
+      <div class="uber-grid-2">
+        <!-- Publish Form -->
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 20px;">Publish a Commute Run</h3>
+          
+          <form onsubmit="handleDriverPublish(event)">
+            <div class="uber-grid-2" style="gap: 14px; margin-bottom: 14px;">
+              <div>
+                <label class="form-label-uber">Driver Name</label>
+                <input type="text" id="dName" class="uber-input" value="Kishan Ramgoolam" required />
+              </div>
+              <div>
+                <label class="form-label-uber">Vehicle Model</label>
+                <input type="text" id="dCar" class="uber-input" value="Toyota Aqua Hybrid (Silver)" required />
+              </div>
+            </div>
+
+            <div class="uber-grid-2" style="gap: 14px; margin-bottom: 14px;">
+              <div>
+                <label class="form-label-uber">Departure Point</label>
+                <select id="dFrom" class="uber-input" required>
+                  <option value="Curepipe" selected>Curepipe (Jan Palach)</option>
+                  <option value="Vacoas">Vacoas (Station)</option>
+                  <option value="Quatre Bornes">Quatre Bornes</option>
+                  <option value="Rose Hill">Rose Hill</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label-uber">Destination</label>
+                <select id="dTo" class="uber-input" required>
+                  <option value="Port Louis" selected>Port Louis (Victoria Terminal)</option>
+                  <option value="Ebene">Ebene Cybercity</option>
+                  <option value="Rose Hill">Rose Hill</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px;">
+              <div>
+                <label class="form-label-uber">Time</label>
+                <input type="time" id="dDepTime" class="uber-input" value="07:30" required />
+              </div>
+              <div>
+                <label class="form-label-uber">Seats Free</label>
+                <input type="number" id="dSeatsCount" class="uber-input" min="1" max="6" value="3" required />
+              </div>
+              <div>
+                <label class="form-label-uber">MUR / Seat</label>
+                <input type="number" id="dMur" class="uber-input" min="30" max="250" step="5" value="60" required />
+              </div>
+            </div>
+
+            <button type="submit" class="btn-uber-black">Publish Schedule Instantly</button>
+          </form>
+        </div>
+
+        <!-- Incoming Passenger Requests -->
+        <div class="uber-card-white">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+            <h3 style="font-size: 1.25rem; font-weight: 800;">Seat Requests Needing Approval</h3>
+            <span class="status-badge pending" id="driverPendingCount">0 PENDING</span>
+          </div>
+
+          <div id="driverRequestsFeed">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: SMART ROUTES ==================== -->
+    <section id="view-smartRoutes" class="module-view">
+      <div class="section-title">
+        <span>Smart Route Planner & Google Traffic Monitor</span>
+        <button class="btn-pill-green" onclick="openHazardModal()"><i class="fa-solid fa-triangle-exclamation"></i> Report Hazard</button>
+      </div>
+
+      <div class="uber-grid-2">
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 14px;">Corridor Route Comparison</h3>
+          
+          <div class="uber-grid-2" style="margin-bottom: 16px;">
+            <div>
+              <label class="form-label-uber">Starting Point</label>
+              <select id="routeSelectStart" class="uber-input" onchange="updateGoogleRoute()">
+                <option value="Curepipe, Mauritius">Curepipe</option>
+                <option value="Vacoas, Mauritius">Vacoas</option>
+                <option value="Quatre Bornes, Mauritius">Quatre Bornes</option>
+                <option value="Rose Hill, Mauritius">Rose Hill</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label-uber">Destination</label>
+              <select id="routeSelectEnd" class="uber-input" onchange="updateGoogleRoute()">
+                <option value="Victoria Urban Terminal, Port Louis, Mauritius" selected>Port Louis</option>
+                <option value="Ebene Cybercity, Mauritius">Ebene Cybercity</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="routeDetailsBox"></div>
+        </div>
+
+        <div>
+          <div class="uber-hero-map-wrapper">
+            <div id="mainGoogleMap" style="width: 100%; height: 480px;"></div>
+          </div>
+
+          <div class="uber-card-white" style="margin-top: 18px; padding: 18px;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">
+              Reported Incidents (<span id="incCount">2</span>)
+            </h4>
+            <div id="incidentsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: ECO MOBILITY ==================== -->
+    <section id="view-ecoMobility" class="module-view">
+      <div class="section-title">
+        <span>Eco Mobility & Electric 2-Wheelers</span>
+      </div>
+
+      <div class="uber-tier-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="uber-card-white">
+          <div style="font-size: 2rem; color: var(--electric-green); margin-bottom: 12px;"><i class="fa-solid fa-bicycle"></i></div>
+          <h3 style="font-size: 1.2rem; font-weight: 800;">Ebene Cybercity Dock</h3>
+          <p style="font-size: 0.84rem; color: var(--uber-gray-600); margin: 6px 0 14px 0;">34 bikes parked at Cyber Tower 1. Ideal for fast connections from Ebene Metro Station.</p>
+          <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 14px;">15 MUR <small>/ 30 mins</small></div>
+          <button class="btn-uber-black" style="padding: 10px;" onclick="uberToast('E-Bike #42 unlocked at Ebene Hub!')"><i class="fa-solid fa-unlock"></i> Unlock E-Bike</button>
+        </div>
+
+        <div class="uber-card-white">
+          <div style="font-size: 2rem; color: var(--electric-green); margin-bottom: 12px;"><i class="fa-solid fa-bicycle"></i></div>
+          <h3 style="font-size: 1.2rem; font-weight: 800;">Rose Hill Plaza Hub</h3>
+          <p style="font-size: 0.84rem; color: var(--uber-gray-600); margin: 6px 0 14px 0;">20 bikes ready at the Central Metro Promenade. Smooth path to Beau Bassin.</p>
+          <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 14px;">15 MUR <small>/ 30 mins</small></div>
+          <button class="btn-uber-black" style="padding: 10px;" onclick="uberToast('E-Bike #18 unlocked at Rose Hill!')"><i class="fa-solid fa-unlock"></i> Unlock E-Bike</button>
+        </div>
+
+        <div class="uber-card-white">
+          <div style="font-size: 2rem; color: var(--electric-green); margin-bottom: 12px;"><i class="fa-solid fa-bicycle"></i></div>
+          <h3 style="font-size: 1.2rem; font-weight: 800;">Port Louis Waterfront</h3>
+          <p style="font-size: 0.84rem; color: var(--uber-gray-600); margin: 6px 0 14px 0;">Dedicated cycling link connecting Caudan Waterfront to Victoria Terminal.</p>
+          <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 14px;">20 MUR <small>/ 30 mins</small></div>
+          <button class="btn-uber-black" style="padding: 10px;" onclick="uberToast('E-Bike #07 unlocked at Waterfront!')"><i class="fa-solid fa-unlock"></i> Unlock E-Bike</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: FREIGHT PLANNING ==================== -->
+    <section id="view-freight" class="module-view">
+      <div class="section-title">
+        <span>Freight Logistics: Off-Peak Shift Engine</span>
+      </div>
+
+      <div class="uber-grid-2">
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 14px;">Recommended Delivery Windows</h3>
+          <div style="background: rgba(6, 193, 103, 0.1); border-left: 4px solid var(--electric-green); padding: 14px; border-radius: 8px; margin-bottom: 14px;">
+            <strong style="color: #038a45;">Midday Valley Slot (10:00 - 13:30)</strong>
+            <p style="font-size: 0.84rem; color: var(--uber-gray-600); margin-top: 4px;">Saves ~4.2 Litres of diesel per container haul between Harbour & Phoenix.</p>
+          </div>
+          <div style="background: rgba(225, 25, 0, 0.08); border-left: 4px solid var(--danger-red); padding: 14px; border-radius: 8px;">
+            <strong style="color: var(--danger-red);">Morning Peak Blackout (07:15 - 09:15)</strong>
+            <p style="font-size: 0.84rem; color: var(--uber-gray-600); margin-top: 4px;">Sorèze choke point adds +45 mins delay. Lorries &ge;3.5T strongly advised to divert.</p>
+          </div>
+        </div>
+
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 14px;">Dispatch Penalty Estimator</h3>
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label-uber">Planned Departure</label>
+            <input type="time" id="frTime" class="uber-input" value="08:15" onchange="calcFreight()">
+          </div>
+          <div id="frResultBox" style="padding: 16px; background: var(--uber-gray-50); border-radius: var(--radius-sm); font-size: 0.88rem;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 6: SAFETY ==================== -->
+    <section id="view-safety" class="module-view">
+      <div class="section-title">
+        <span>Safety, Trust & Emergency Protocol</span>
+      </div>
+
+      <div style="background: #FFF8E6; border: 1px solid #FFE08A; border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px; font-size: 0.88rem; color: #7A5300;">
+        <strong>Prototype Demonstration Disclaimer:</strong> Driver background verification, police escalation, and NLTA checks shown here are mock demonstration flows and not yet connected to live Mauritius Government databases.
+      </div>
+
+      <div class="uber-grid-2">
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 14px;">In-Ride Safety Features</h3>
+          <button class="btn-uber-black" style="margin-bottom: 12px;" onclick="uberToast('Encrypted tracking link copied to clipboard!')"><i class="fa-solid fa-share-nodes"></i> Share Live Journey Tracking Link</button>
+          <button class="btn-uber-black" style="background: var(--danger-red);" onclick="uberToast('SOS: Mock GPS coordinates pinged to Mauritius dispatch center')"><i class="fa-solid fa-bell"></i> Emergency SOS Demonstration</button>
+        </div>
+
+        <div class="uber-card-white">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 14px;">Community Verification Badges</h3>
+          <p style="font-size: 0.86rem; color: var(--uber-gray-600); line-height: 1.6;">
+            All carpooling drivers undergo simulated National Identity Card (NIC) screening and vehicle fitness checks. Mutual two-way reviews ensure passenger and driver safety.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 7: ADMIN ANALYTICS ==================== -->
+    <section id="view-admin" class="module-view">
+      <div class="section-title">
+        <span>Mobility Analytics & Avoided Vehicles Dashboard</span>
+      </div>
+
+      <div class="uber-tier-grid" style="margin-bottom: 28px;">
+        <div class="uber-card-white">
+          <div style="color: var(--uber-gray-600); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Registered Users</div>
+          <div style="font-size: 2.2rem; font-weight: 800; margin-top: 4px;">128</div>
+        </div>
+        <div class="uber-card-white">
+          <div style="color: var(--uber-gray-600); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Active Journeys</div>
+          <div style="font-size: 2.2rem; font-weight: 800; margin-top: 4px;" id="adminTotalRides">3</div>
+        </div>
+        <div class="uber-card-white">
+          <div style="color: var(--uber-gray-600); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Matched Seats</div>
+          <div style="font-size: 2.2rem; font-weight: 800; margin-top: 4px;" id="adminTotalMatches">2</div>
+        </div>
+        <div class="uber-card-white" style="border-left: 4px solid var(--electric-green);">
+          <div style="color: var(--uber-gray-600); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Cars Avoided (Est.)</div>
+          <div style="font-size: 2.2rem; font-weight: 800; margin-top: 4px; color: var(--electric-green);" id="adminCarsAvoided">2</div>
+        </div>
+      </div>
+
+      <div class="uber-card-white">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Live Registry Log</h3>
+        <table class="uber-table">
+          <thead>
+            <tr>
+              <th>Driver</th>
+              <th>Vehicle</th>
+              <th>Route</th>
+              <th>Departure</th>
+              <th>Seats Free</th>
+              <th>Price</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Incident Modal -->
+  <div class="uber-modal-backdrop" id="hazardModal">
+    <div class="uber-modal-box">
+      <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 16px;">Report a Road Incident</h3>
+      <form onsubmit="submitHazardPin(event)">
+        <div style="margin-bottom: 14px;">
+          <label class="form-label-uber">Location</label>
+          <select id="hzLoc" class="uber-input">
+            <option value="Sorèze / Montee S">Sorèze / Montee S (M1 Entrance to Port Louis)</option>
+            <option value="Bagatelle Roundabout">Bagatelle Roundabout</option>
+            <option value="St Jean Intersection">St Jean Intersection (Quatre Bornes)</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 18px;">
+          <label class="form-label-uber">Incident Type</label>
+          <select id="hzType" class="uber-input">
+            <option value="Heavy Tailback">Heavy Traffic Tailback</option>
+            <option value="Road Accident">Vehicle Collision</option>
+            <option value="Road Repairs">Lane Narrowing / Road Works</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn-uber-black" style="flex: 1;">Broadcast Pin</button>
+          <button type="button" class="btn-pill-light" style="color: var(--uber-black); border: 1px solid var(--uber-gray-200);" onclick="closeHazardModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="uber-toast-container" id="toastBox"></div>
+
+  <!-- Footer -->
+  <footer class="uber-footer">
+    <div class="footer-inner">
+      <div>
+        <span class="brand-logo-uber">MOBI<span>FLOW</span></span>
+        <p style="font-size: 0.82rem; margin-top: 4px;">Smart Mobility Technology Platform &bull; Port Louis &harr; Curepipe Pilot</p>
+      </div>
+      <div style="font-size: 0.82rem;">
+        &copy; 2026 MobiFlow Mauritius &bull; Powered by Google Maps Platform
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Pilot corridor reference points
+    const CORRIDOR = {
+      "Port Louis": { lat: -20.1609, lng: 57.5012, idx: 5, addr: "Victoria Urban Terminal, Port Louis, Mauritius" },
+      "Rose Hill": { lat: -20.2443, lng: 57.4716, idx: 4, addr: "Rose Hill, Mauritius" },
+      "Ebene": { lat: -20.2435, lng: 57.4939, idx: 4, addr: "Ebene Cybercity, Mauritius" },
+      "Quatre Bornes": { lat: -20.2644, lng: 57.4791, idx: 3, addr: "Quatre Bornes, Mauritius" },
+      "Vacoas": { lat: -20.2980, lng: 57.4950, idx: 2, addr: "Vacoas, Mauritius" },
+      "Curepipe": { lat: -20.3186, lng: 57.5262, idx: 1, addr: "Curepipe, Mauritius" }
+    };
+
+    let rides = JSON.parse(localStorage.getItem("mobiflow_uber_rides")) || [
+      { id: "R-1", driverName: "Kishan Ramgoolam", origin: "Curepipe", destination: "Port Louis", time: "07:30", availableSeats: 3, totalSeats: 4, priceMur: 50, vehicle: "Toyota Aqua Hybrid", rating: 4.9, corridor: ["Curepipe", "Vacoas", "Quatre Bornes", "Rose Hill", "Port Louis"] },
+      { id: "R-2", driverName: "Anishta Bheenick", origin: "Quatre Bornes", destination: "Port Louis", time: "07:45", availableSeats: 2, totalSeats: 3, priceMur: 55, vehicle: "Nissan Leaf Electric", rating: 4.8, corridor: ["Quatre Bornes", "Ebene", "Port Louis"] },
+      { id: "R-3", driverName: "Jean-Marc Duval", origin: "Vacoas", destination: "Ebene", time: "08:00", availableSeats: 3, totalSeats: 4, priceMur: 45, vehicle: "Honda Fit Hybrid", rating: 5.0, corridor: ["Vacoas", "Quatre Bornes", "Ebene"] }
+    ];
+
+    let bookings = JSON.parse(localStorage.getItem("mobiflow_uber_bookings")) || [];
+    let incidents = [
+      { loc: "Sorèze / Montee S", type: "Heavy Tailback", time: "10 mins ago", lat: -20.1985, lng: 57.4890 },
+      { loc: "Bagatelle Roundabout", type: "Road Accident", time: "25 mins ago", lat: -20.2245, lng: 57.4985 }
+    ];
+
+    // Google Maps Instances
+    let heroMap, mainMap;
+    let heroDirectionsService, heroDirectionsRenderer;
+    let mainDirectionsService, mainDirectionsRenderer;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setupNavigation();
+      filterRides();
+      renderDriverRequests();
+      renderIncidents();
+      updateAnalytics();
+      calcFreight();
+    });
+
+    function setupNavigation() {
+      document.querySelectorAll(".nav-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const t = btn.getAttribute("data-target");
+          if (t) {
+            switchView(t);
+            document.getElementById("mobileDrawer").classList.remove("open");
+          }
+        });
+      });
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll(".nav-tab-btn").forEach(b => b.classList.toggle("active", b.getAttribute("data-target") === viewId));
+      document.querySelectorAll(".module-view").forEach(v => v.classList.toggle("active", v.id === "view-" + viewId));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleDrawer() {
+      document.getElementById("mobileDrawer").classList.toggle("open");
+    }
+
+    function selectTier(elem, tier) {
+      document.querySelectorAll(".tier-card").forEach(c => c.classList.remove("selected"));
+      elem.classList.add("selected");
+      uberToast(`Selected ${tier} tier`);
+    }
+
+    /* MATCHING ENGINE */
+    function filterRides() {
+      const p = document.getElementById("pPickup").value;
+      const d = document.getElementById("pDropoff").value;
+      const t = document.getElementById("pTime").value;
+      const c = document.getElementById("matchingDriversList");
+      c.innerHTML = "";
+
+      const pIdx = CORRIDOR[p]?.idx || 0;
+      const dIdx = CORRIDOR[d]?.idx || 0;
+      const passengerDir = dIdx - pIdx;
+
+      const scored = rides.filter(r => {
+        const rStart = CORRIDOR[r.origin]?.idx || 0;
+        const rEnd = CORRIDOR[r.destination]?.idx || 0;
+        const driverDir = rEnd - rStart;
+        if ((passengerDir > 0 && driverDir <= 0) || (passengerDir < 0 && driverDir >= 0)) return false;
+        return true;
+      });
+
+      document.getElementById("matchResultsCount").innerText = scored.length;
+
+      if (scored.length === 0) {
+        c.innerHTML = `<div style="background: var(--uber-gray-50); padding: 30px; text-align: center; border-radius: var(--radius-md); color: var(--uber-gray-600);">No direct driver match for this schedule. Adjust time or try an alternative corridor town.</div>`;
+        return;
+      }
+
+      scored.forEach(ride => {
+        const card = document.createElement("div");
+        card.className = "ride-match-card";
+        card.innerHTML = `
+          <div class="match-avatar">
+            <i class="fa-solid fa-user"></i>
+            <span class="verified-check"><i class="fa-solid fa-check"></i></span>
+          </div>
+
+          <div class="match-info">
+            <h4>${ride.driverName} &bull; <span style="font-size: 0.85rem; color: #7A5300;"><i class="fa-solid fa-star"></i> ${ride.rating}</span></h4>
+            <div class="match-sub">
+              <span><i class="fa-solid fa-car"></i> ${ride.vehicle}</span>
+              <span><i class="fa-solid fa-chair"></i> ${ride.availableSeats} seats available</span>
+            </div>
+            <div class="match-corridor-flow">
+              <span>${ride.origin} (${ride.time})</span>
+              <i class="fa-solid fa-arrow-right-long" style="color: var(--electric-green);"></i>
+              <span>${ride.destination}</span>
+            </div>
+          </div>
+
+          <div class="match-action">
+            <div class="match-price">${ride.priceMur} MUR <small>/ seat</small></div>
+            <button class="btn-pill-green" onclick="requestSeat('${ride.id}', '${p}', '${d}')">
+              <i class="fa-solid fa-ticket"></i> Request Seat
+            </button>
+          </div>
+        `;
+        c.appendChild(card);
+      });
+    }
+
+    function searchRidesAction() {
+      filterRides();
+      syncHeroRoute();
+      uberToast("Matching rides refreshed along Plaines Wilhems corridor");
+    }
+
+    function requestSeat(rideId, pickup, dropoff) {
+      const r = rides.find(item => item.id === rideId);
+      if (!r || r.availableSeats <= 0) {
+        uberToast("No seats left in this carpool");
+        return;
+      }
+
+      const bk = {
+        id: "BK-" + Math.floor(1000 + Math.random() * 9000),
+        rideId: r.id,
+        driverName: r.driverName,
+        passengerName: "You (Mauritian Commuter)",
+        pickup: pickup,
+        dropoff: dropoff,
+        time: r.time,
+        priceMur: r.priceMur,
+        status: "PENDING"
+      };
+
+      bookings.push(bk);
+      saveData();
+      renderDriverRequests();
+      updateAnalytics();
+      uberToast(`Seat requested with ${r.driverName}! Pending driver confirmation.`);
+    }
+
+    function renderDriverRequests() {
+      const c = document.getElementById("driverRequestsFeed");
+      const pending = bookings.filter(b => b.status === "PENDING");
+      document.getElementById("driverPendingCount").innerText = `${pending.length} PENDING`;
+      c.innerHTML = "";
+
+      if (pending.length === 0) {
+        c.innerHTML = `<div style="font-size: 0.88rem; color: var(--uber-gray-600); padding: 16px;">No pending seat requests.</div>`;
+        return;
+      }
+
+      pending.forEach(b => {
+        const row = document.createElement("div");
+        row.style = "background: var(--uber-gray-50); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 10px;";
+        row.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: var(--uber-black); font-size: 0.95rem;">${b.passengerName}</strong>
+            <span class="status-badge pending">Wants 1 Seat</span>
+          </div>
+          <div style="font-size: 0.84rem; color: var(--uber-gray-600); margin-bottom: 10px;">
+            ${b.pickup} &rarr; ${b.dropoff} &bull; ${b.time} &bull; <strong>${b.priceMur} MUR</strong>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-pill-green" style="padding: 6px 14px; font-size: 0.8rem;" onclick="respondRequest('${b.id}', true)">Accept Passenger</button>
+            <button class="btn-pill-light" style="padding: 6px 14px; font-size: 0.8rem; color: var(--uber-black); border: 1px solid var(--uber-gray-200);" onclick="respondRequest('${b.id}', false)">Decline</button>
+          </div>
+        `;
+        c.appendChild(row);
+      });
+    }
+
+    function respondRequest(id, accept) {
+      const b = bookings.find(item => item.id === id);
+      if (!b) return;
+
+      if (accept) {
+        b.status = "CONFIRMED";
+        const r = rides.find(item => item.id === b.rideId);
+        if (r && r.availableSeats > 0) r.availableSeats--;
+        uberToast("Passenger confirmed! Both dashboards updated.");
+      } else {
+        b.status = "REJECTED";
+        uberToast("Request declined.");
+      }
+
+      saveData();
+      renderDriverRequests();
+      filterRides();
+      updateAnalytics();
+    }
+
+    function handleDriverPublish(e) {
+      e.preventDefault();
+      const origin = document.getElementById("dFrom").value;
+      const destination = document.getElementById("dTo").value;
+      if (origin === destination) {
+        uberToast("Origin and destination cannot be identical.");
+        return;
+      }
+
+      const seats = parseInt(document.getElementById("dSeatsCount").value, 10);
+      const newRide = {
+        id: "R-" + Math.floor(100 + Math.random() * 900),
+        driverName: document.getElementById("dName").value,
+        origin: origin,
+        destination: destination,
+        time: document.getElementById("dDepTime").value,
+        availableSeats: seats,
+        totalSeats: seats,
+        priceMur: parseInt(document.getElementById("dMur").value, 10),
+        vehicle: document.getElementById("dCar").value,
+        rating: 5.0,
+        corridor: [origin, destination]
+      };
+
+      rides.unshift(newRide);
+      saveData();
+      filterRides();
+      updateAnalytics();
+      uberToast(`Ride published! Commuters along ${origin} -> ${destination} can now book.`);
+      switchView("home");
+    }
+
+    function saveData() {
+      localStorage.setItem("mobiflow_uber_rides", JSON.stringify(rides));
+      localStorage.setItem("mobiflow_uber_bookings", JSON.stringify(bookings));
+    }
+
+    function updateAnalytics() {
+      const confirmed = bookings.filter(b => b.status === "CONFIRMED").length;
+      document.getElementById("adminTotalRides").innerText = rides.length;
+      document.getElementById("adminTotalMatches").innerText = confirmed;
+      document.getElementById("adminCarsAvoided").innerText = confirmed;
+
+      const tbody = document.getElementById("adminTableBody");
+      tbody.innerHTML = "";
+      rides.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${r.driverName}</strong></td>
+          <td>${r.vehicle}</td>
+          <td>${r.origin} &rarr; ${r.destination}</td>
+          <td>${r.time}</td>
+          <td>${r.availableSeats} / ${r.totalSeats} free</td>
+          <td><strong>${r.priceMur} MUR</strong></td>
+          <td><span class="status-badge confirmed">Active</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    /* GOOGLE MAPS API INTEGRATION */
+    window.initGoogleMap = function() {
+      const mauritiusCenter = { lat: -20.2443, lng: 57.4939 };
+
+      // 1. Hero Map instance
+      heroMap = new google.maps.Map(document.getElementById("heroInteractiveMap"), {
+        center: mauritiusCenter,
+        zoom: 12,
+        mapTypeControl: false,
+        streetViewControl: false,
+        styles: [
+          { featureType: "all", elementType: "geometry", stylers: [{ saturation: -20 }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ lightness: 20 }] },
+          { featureType: "poi", stylers: [{ visibility: "off" }] }
+        ]
+      });
+
+      new google.maps.TrafficLayer().setMap(heroMap);
+      heroDirectionsService = new google.maps.DirectionsService();
+      heroDirectionsRenderer = new google.maps.DirectionsRenderer({
+        map: heroMap,
+        polylineOptions: { strokeColor: "#000000", strokeWeight: 5 }
+      });
+
+      // 2. Smart Routes Main Map
+      mainMap = new google.maps.Map(document.getElementById("mainGoogleMap"), {
+        center: mauritiusCenter,
+        zoom: 12,
+        mapTypeControl: false
+      });
+      new google.maps.TrafficLayer().setMap(mainMap);
+      mainDirectionsService = new google.maps.DirectionsService();
+      mainDirectionsRenderer = new google.maps.DirectionsRenderer({
+        map: mainMap,
+        polylineOptions: { strokeColor: "#06C167", strokeWeight: 6 }
+      });
+
+      syncHeroRoute();
+      updateGoogleRoute();
+      renderIncidentPins();
+    };
+
+    function syncHeroRoute() {
+      if (!heroDirectionsService) return;
+      const p = document.getElementById("pPickup").value;
+      const d = document.getElementById("pDropoff").value;
+
+      const originAddr = CORRIDOR[p]?.addr || "Curepipe, Mauritius";
+      const destAddr = CORRIDOR[d]?.addr || "Victoria Urban Terminal, Port Louis, Mauritius";
+
+      heroDirectionsService.route({
+        origin: originAddr,
+        destination: destAddr,
+        travelMode: google.maps.TravelMode.DRIVING
+      }, (res, status) => {
+        if (status === "OK") {
+          heroDirectionsRenderer.setDirections(res);
+          const leg = res.routes[0].legs[0];
+          document.getElementById("overlayRouteTitle").innerText = `${p} → ${d}`;
+          document.getElementById("overlayRouteDuration").innerText = `${leg.duration.text} (${leg.distance.text}) via M1 Corridor`;
+        }
+      });
+    }
+
+    function updateGoogleRoute() {
+      if (!mainDirectionsService) return;
+      const origin = document.getElementById("routeSelectStart").value;
+      const dest = document.getElementById("routeSelectEnd").value;
+
+      mainDirectionsService.route({
+        origin: origin,
+        destination: dest,
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true
+      }, (res, status) => {
+        const box = document.getElementById("routeDetailsBox");
+        if (status === "OK") {
+          mainDirectionsRenderer.setDirections(res);
+          const leg = res.routes[0].legs[0];
+          box.innerHTML = `
+            <div style="background: rgba(6, 193, 103, 0.1); border-left: 4px solid var(--electric-green); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 12px;">
+              <strong style="color: #038a45;">Recommended: M1 Motorway Direct</strong>
+              <div style="font-size: 1.2rem; font-weight: 800; margin: 4px 0;">${leg.duration.text} &bull; ${leg.distance.text}</div>
+              <p style="font-size: 0.8rem; color: var(--uber-gray-600);">Smooth flow until Montee S / Sorèze funnel.</p>
+            </div>
+            <div style="background: var(--uber-gray-50); padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem;">
+              <strong>Bypass: Old Moka Road (B1)</strong> &bull; +8 mins &bull; Recommended during morning rush hours.
+            </div>
+          `;
+        }
+      });
+    }
+
+    function renderIncidentPins() {
+      incidents.forEach(inc => {
+        new google.maps.Marker({
+          position: { lat: inc.lat, lng: inc.lng },
+          map: mainMap,
+          title: inc.type,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: "#E11900",
+            fillOpacity: 1,
+            strokeWeight: 2,
+            strokeColor: "#FFFFFF"
+          }
+        });
+      });
+    }
+
+    function renderIncidents() {
+      const c = document.getElementById("incidentsList");
+      c.innerHTML = "";
+      document.getElementById("incCount").innerText = incidents.length;
+      incidents.forEach(i => {
+        const row = document.createElement("div");
+        row.style = "background: var(--uber-gray-50); padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;";
+        row.innerHTML = `<span><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger-red); margin-right: 6px;"></i>${i.loc} (${i.type})</span><small style="color: var(--uber-gray-600);">${i.time}</small>`;
+        c.appendChild(row);
+      });
+    }
+
+    function openHazardModal() { document.getElementById("hazardModal").classList.add("open"); }
+    function closeHazardModal() { document.getElementById("hazardModal").classList.remove("open"); }
+
+    function submitHazardPin(e) {
+      e.preventDefault();
+      const loc = document.getElementById("hzLoc").value;
+      const type = document.getElementById("hzType").value;
+      incidents.unshift({ loc, type, time: "Just now", lat: -20.2100, lng: 57.4900 });
+      renderIncidents();
+      closeHazardModal();
+      uberToast("Incident broadcasted to community route map!");
+    }
+
+    function calcFreight() {
+      const t = document.getElementById("frTime").value;
+      const [h] = t.split(":").map(Number);
+      const b = document.getElementById("frResultBox");
+      if (h === 7 || h === 8) {
+        b.innerHTML = `<strong style="color: var(--danger-red);">Peak Congestion Penalty:</strong> Dispatching at ${t} compounds M1 bottleneck queue. Expected delay +48 mins, extra fuel burn ~4.6L.`;
+      } else {
+        b.innerHTML = `<strong style="color: #038a45;">Smooth Off-Peak Slot:</strong> Dispatching at ${t} utilizes available highway capacity. Estimated transit: 22 mins.`;
+      }
+    }
+
+    function uberToast(msg) {
+      const box = document.getElementById("toastBox");
+      const t = document.createElement("div");
+      t.className = "uber-toast";
+      t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--electric-green);"></i><span>${msg}</span>`;
+      box.appendChild(t);
+      setTimeout(() => t.remove(), 3600);
+    }
+  </script>
+
+  <!-- Google Maps API with your Key -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBCS8maYLaxTWXzu_tIdjIMuEqkNDerLM&callback=initGoogleMap&libraries=places" async defer></script>
+
+</body>
+</html>
