@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MobiFlow Mauritius | Request a Ride, Carpool & Smart Routes</title>
+  <title>SmartMove Mauritius | Request a Ride, Carpool & Smart Routes</title>
   
   <!-- Premium Geometric Typography (Uber Move aesthetic) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
@@ -243,9 +243,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ========================================================
-       UBER HERO & RIDE BOOKING PANEL
-       ======================================================== */
+    /* Hero & Booking Layout */
     .uber-hero-grid {
       display: grid;
       grid-template-columns: 460px 1fr;
@@ -384,7 +382,7 @@
       transform: translateY(-1px);
     }
 
-    /* Right Hero Visual / Map Integration */
+    /* Google Maps Hero Wrapper */
     .uber-hero-map-wrapper {
       background: var(--uber-gray-50);
       border-radius: var(--radius-lg);
@@ -428,7 +426,7 @@
       margin-top: 2px;
     }
 
-    /* Uber Ride Tier Options */
+    /* Section Titles */
     .section-title {
       font-size: 1.6rem;
       font-weight: 800;
@@ -440,6 +438,7 @@
       justify-content: space-between;
     }
 
+    /* Vehicle Tiers */
     .uber-tier-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -509,7 +508,7 @@
       text-transform: uppercase;
     }
 
-    /* Search Results Ride List */
+    /* Matching Rides */
     .ride-match-card {
       background: var(--uber-white);
       border: 1px solid var(--uber-gray-200);
@@ -596,20 +595,13 @@
       font-weight: 500;
     }
 
-    /* Driver & Admin Panels */
+    /* Cards & Grids */
     .uber-card-white {
       background: var(--uber-white);
       border: 1px solid var(--uber-gray-200);
       border-radius: var(--radius-lg);
       padding: 30px;
       box-shadow: var(--shadow-uber);
-    }
-
-    .uber-card-dark {
-      background: var(--uber-dark);
-      color: var(--uber-white);
-      border-radius: var(--radius-lg);
-      padding: 30px;
     }
 
     .uber-grid-2 {
@@ -748,7 +740,7 @@
       <span>Port Louis &bull; Rose Hill &bull; Quatre Bornes &bull; Vacoas &bull; Curepipe</span>
     </div>
     <div style="font-size: 0.74rem;">
-      <span style="color: var(--electric-green);"><i class="fa-solid fa-bolt"></i> Google Maps Live</span> &bull; Currency: <strong>MUR</strong>
+      <span style="color: var(--electric-green);"><i class="fa-solid fa-bolt"></i> Google Maps Active</span> &bull; Currency: <strong>MUR</strong>
     </div>
   </div>
 
@@ -757,7 +749,7 @@
     <div class="nav-inner">
       <div class="brand-section">
         <div class="uber-brand" onclick="switchView('home')">
-          <span class="brand-logo-uber">MOBI<span>FLOW</span></span>
+          <span class="brand-logo-uber">SMART<span>MOVE</span></span>
         </div>
 
         <ul class="uber-nav-menu">
@@ -796,10 +788,10 @@
     <!-- ==================== VIEW 1: HOME & PASSENGER SEARCH ==================== -->
     <section id="view-home" class="module-view active">
       <div class="uber-hero-grid">
-        <!-- Uber Classic Request Widget -->
+        <!-- SmartMove Request Widget -->
         <div class="uber-booking-card">
           <div>
-            <h1 class="booking-title">Go anywhere in Mauritius</h1>
+            <h1 class="booking-title">Go anywhere in Mauritius with SmartMove</h1>
 
             <!-- Connected Route Inputs -->
             <div class="route-connector-wrapper">
@@ -854,7 +846,7 @@
 
           <div>
             <button class="btn-uber-black" onclick="searchRidesAction()">
-              <span>Search Verified Drivers</span>
+              <span>Search Verified SmartMove Drivers</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
             <div style="font-size: 0.74rem; color: var(--uber-gray-600); text-align: center; margin-top: 10px;">
@@ -879,9 +871,9 @@
         </div>
       </div>
 
-      <!-- Vehicle Tiers (Uber Style) -->
+      <!-- Vehicle Tiers -->
       <div class="section-title">
-        <span>Suggested Ride Options along Plaines Wilhems</span>
+        <span>Suggested SmartMove Options along Plaines Wilhems</span>
         <small style="font-size: 0.85rem; color: var(--uber-gray-600); font-weight: 500;">Pilot Launch Corridor</small>
       </div>
 
@@ -889,7 +881,7 @@
         <div class="tier-card selected" onclick="selectTier(this, 'Go')">
           <span class="tier-badge">Popular</span>
           <div class="tier-icon-wrap"><i class="fa-solid fa-car-side"></i></div>
-          <div class="tier-name">MobiFlow Go <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
+          <div class="tier-name">SmartMove Go <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
           <div class="tier-desc">Affordable everyday carpool in clean hybrid hatchbacks (Toyota Aqua, Fit).</div>
           <div class="tier-price">50 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
         </div>
@@ -897,14 +889,14 @@
         <div class="tier-card" onclick="selectTier(this, 'Green')">
           <span class="tier-badge" style="background: #000; color: #FFF;">Zero Emission</span>
           <div class="tier-icon-wrap" style="color: var(--electric-green);"><i class="fa-solid fa-leaf"></i></div>
-          <div class="tier-name">MobiFlow Green <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
+          <div class="tier-name">SmartMove Green <span class="tier-cap"><i class="fa-solid fa-user"></i> 3</span></div>
           <div class="tier-desc">100% Electric vehicles (Nissan Leaf, BYD Atto 3) reducing Mauritius carbon footprint.</div>
           <div class="tier-price">55 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
         </div>
 
         <div class="tier-card" onclick="selectTier(this, 'Comfort')">
           <div class="tier-icon-wrap"><i class="fa-solid fa-car"></i></div>
-          <div class="tier-name">Comfort <span class="tier-cap"><i class="fa-solid fa-user"></i> 4</span></div>
+          <div class="tier-name">SmartMove Comfort <span class="tier-cap"><i class="fa-solid fa-user"></i> 4</span></div>
           <div class="tier-desc">Spacious sedans with premium legroom and guaranteed trunk storage space.</div>
           <div class="tier-price">65 MUR <small style="font-size: 0.7rem; color: var(--uber-gray-600);">/ seat</small></div>
         </div>
@@ -919,19 +911,17 @@
 
       <!-- Live Matching Drivers Feed -->
       <div class="section-title">
-        <span>Available Drivers on Your Route (<span id="matchResultsCount">0</span>)</span>
+        <span>Available SmartMove Drivers on Your Route (<span id="matchResultsCount">0</span>)</span>
       </div>
 
-      <div id="matchingDriversList">
-        <!-- Populated via JavaScript Matching Engine -->
-      </div>
+      <div id="matchingDriversList"></div>
     </section>
 
     <!-- ==================== VIEW 2: DRIVER DASHBOARD ==================== -->
     <section id="view-offerRide" class="module-view">
       <div class="section-title">
         <span>Driver Dashboard: Offer Seats & Reduce Traffic</span>
-        <button class="btn-pill-green" onclick="showDriverRegisterModal()"><i class="fa-solid fa-plus"></i> Register New Vehicle</button>
+        <button class="btn-pill-green" onclick="uberToast('Vehicle registration modal simulation opened')"><i class="fa-solid fa-plus"></i> Register New Vehicle</button>
       </div>
 
       <div class="uber-grid-2">
@@ -997,9 +987,7 @@
             <span class="status-badge pending" id="driverPendingCount">0 PENDING</span>
           </div>
 
-          <div id="driverRequestsFeed">
-            <!-- Populated dynamically -->
-          </div>
+          <div id="driverRequestsFeed"></div>
         </div>
       </div>
     </section>
@@ -1223,18 +1211,17 @@
   <footer class="uber-footer">
     <div class="footer-inner">
       <div>
-        <span class="brand-logo-uber">MOBI<span>FLOW</span></span>
+        <span class="brand-logo-uber">SMART<span>MOVE</span></span>
         <p style="font-size: 0.82rem; margin-top: 4px;">Smart Mobility Technology Platform &bull; Port Louis &harr; Curepipe Pilot</p>
       </div>
       <div style="font-size: 0.82rem;">
-        &copy; 2026 MobiFlow Mauritius &bull; Powered by Google Maps Platform
+        &copy; 2026 SmartMove Mauritius &bull; Powered by Google Maps Platform
       </div>
     </div>
   </footer>
 
   <!-- SCRIPT LOGIC -->
   <script>
-    // Pilot corridor reference points
     const CORRIDOR = {
       "Port Louis": { lat: -20.1609, lng: 57.5012, idx: 5, addr: "Victoria Urban Terminal, Port Louis, Mauritius" },
       "Rose Hill": { lat: -20.2443, lng: 57.4716, idx: 4, addr: "Rose Hill, Mauritius" },
@@ -1244,19 +1231,18 @@
       "Curepipe": { lat: -20.3186, lng: 57.5262, idx: 1, addr: "Curepipe, Mauritius" }
     };
 
-    let rides = JSON.parse(localStorage.getItem("mobiflow_uber_rides")) || [
+    let rides = JSON.parse(localStorage.getItem("smartmove_rides")) || [
       { id: "R-1", driverName: "Kishan Ramgoolam", origin: "Curepipe", destination: "Port Louis", time: "07:30", availableSeats: 3, totalSeats: 4, priceMur: 50, vehicle: "Toyota Aqua Hybrid", rating: 4.9, corridor: ["Curepipe", "Vacoas", "Quatre Bornes", "Rose Hill", "Port Louis"] },
       { id: "R-2", driverName: "Anishta Bheenick", origin: "Quatre Bornes", destination: "Port Louis", time: "07:45", availableSeats: 2, totalSeats: 3, priceMur: 55, vehicle: "Nissan Leaf Electric", rating: 4.8, corridor: ["Quatre Bornes", "Ebene", "Port Louis"] },
       { id: "R-3", driverName: "Jean-Marc Duval", origin: "Vacoas", destination: "Ebene", time: "08:00", availableSeats: 3, totalSeats: 4, priceMur: 45, vehicle: "Honda Fit Hybrid", rating: 5.0, corridor: ["Vacoas", "Quatre Bornes", "Ebene"] }
     ];
 
-    let bookings = JSON.parse(localStorage.getItem("mobiflow_uber_bookings")) || [];
+    let bookings = JSON.parse(localStorage.getItem("smartmove_bookings")) || [];
     let incidents = [
       { loc: "Sorèze / Montee S", type: "Heavy Tailback", time: "10 mins ago", lat: -20.1985, lng: 57.4890 },
       { loc: "Bagatelle Roundabout", type: "Road Accident", time: "25 mins ago", lat: -20.2245, lng: 57.4985 }
     ];
 
-    // Google Maps Instances
     let heroMap, mainMap;
     let heroDirectionsService, heroDirectionsRenderer;
     let mainDirectionsService, mainDirectionsRenderer;
@@ -1295,7 +1281,7 @@
     function selectTier(elem, tier) {
       document.querySelectorAll(".tier-card").forEach(c => c.classList.remove("selected"));
       elem.classList.add("selected");
-      uberToast(`Selected ${tier} tier`);
+      uberToast(`Selected SmartMove ${tier}`);
     }
 
     /* MATCHING ENGINE */
@@ -1321,7 +1307,7 @@
       document.getElementById("matchResultsCount").innerText = scored.length;
 
       if (scored.length === 0) {
-        c.innerHTML = `<div style="background: var(--uber-gray-50); padding: 30px; text-align: center; border-radius: var(--radius-md); color: var(--uber-gray-600);">No direct driver match for this schedule. Adjust time or try an alternative corridor town.</div>`;
+        c.innerHTML = `<div style="background: var(--uber-gray-50); padding: 30px; text-align: center; border-radius: var(--radius-md); color: var(--uber-gray-600);">No direct SmartMove driver match for this schedule. Adjust time or try an alternative corridor town.</div>`;
         return;
       }
 
@@ -1361,7 +1347,7 @@
     function searchRidesAction() {
       filterRides();
       syncHeroRoute();
-      uberToast("Matching rides refreshed along Plaines Wilhems corridor");
+      uberToast("SmartMove journeys updated for your route");
     }
 
     function requestSeat(rideId, pickup, dropoff) {
@@ -1429,7 +1415,7 @@
         b.status = "CONFIRMED";
         const r = rides.find(item => item.id === b.rideId);
         if (r && r.availableSeats > 0) r.availableSeats--;
-        uberToast("Passenger confirmed! Both dashboards updated.");
+        uberToast("Passenger confirmed! Dashboards synchronized.");
       } else {
         b.status = "REJECTED";
         uberToast("Request declined.");
@@ -1469,13 +1455,13 @@
       saveData();
       filterRides();
       updateAnalytics();
-      uberToast(`Ride published! Commuters along ${origin} -> ${destination} can now book.`);
+      uberToast(`SmartMove ride published along ${origin} -> ${destination}!`);
       switchView("home");
     }
 
     function saveData() {
-      localStorage.setItem("mobiflow_uber_rides", JSON.stringify(rides));
-      localStorage.setItem("mobiflow_uber_bookings", JSON.stringify(bookings));
+      localStorage.setItem("smartmove_rides", JSON.stringify(rides));
+      localStorage.setItem("smartmove_bookings", JSON.stringify(bookings));
     }
 
     function updateAnalytics() {
@@ -1501,11 +1487,11 @@
       });
     }
 
-    /* GOOGLE MAPS API INTEGRATION */
+    /* GOOGLE MAPS INTEGRATION */
     window.initGoogleMap = function() {
       const mauritiusCenter = { lat: -20.2443, lng: 57.4939 };
 
-      // 1. Hero Map instance
+      // Hero Map instance
       heroMap = new google.maps.Map(document.getElementById("heroInteractiveMap"), {
         center: mauritiusCenter,
         zoom: 12,
@@ -1525,7 +1511,7 @@
         polylineOptions: { strokeColor: "#000000", strokeWeight: 5 }
       });
 
-      // 2. Smart Routes Main Map
+      // Main Route Map instance
       mainMap = new google.maps.Map(document.getElementById("mainGoogleMap"), {
         center: mauritiusCenter,
         zoom: 12,
@@ -1587,7 +1573,7 @@
               <p style="font-size: 0.8rem; color: var(--uber-gray-600);">Smooth flow until Montee S / Sorèze funnel.</p>
             </div>
             <div style="background: var(--uber-gray-50); padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem;">
-              <strong>Bypass: Old Moka Road (B1)</strong> &bull; +8 mins &bull; Recommended during morning rush hours.
+              <strong>Bypass: Old Moka Road (B1)</strong> &bull; +8 mins &bull; Recommended during peak morning bottlenecks.
             </div>
           `;
         }
@@ -1634,7 +1620,7 @@
       incidents.unshift({ loc, type, time: "Just now", lat: -20.2100, lng: 57.4900 });
       renderIncidents();
       closeHazardModal();
-      uberToast("Incident broadcasted to community route map!");
+      uberToast("Incident broadcasted to SmartMove route map!");
     }
 
     function calcFreight() {
