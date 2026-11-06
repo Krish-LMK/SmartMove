@@ -8,7 +8,3 @@
 | 2026-11-03 | No field measurements (protocol removed); use published timetables + OSM; peak slowdown as scenario parameter until a better data source is found | Field timing is impractical for the team; Track 5 may not use synthetic data as observations | Lead |
 | TBD | Project name | Not yet decided | Team |
 
-## Open questions
-- Are teams allowed to prepare code/data before the 7 Nov kick-off? **Ask organisers.**
-- Is SUMO expected, or is any simulation acceptable?
-- Will organisers provide any traffic or Metro datasets?
