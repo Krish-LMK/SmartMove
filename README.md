@@ -1,60 +1,74 @@
-# SmartMove – Port Louis–Curepipe Corridor Simulator
+# SmartMove – Port Louis–Curepipe Corridor
 
-> **Status:** prototype built for Tech Wave – AI Hackathon Mauritius 2026 (Track 5: Traffic and Metro Express optimisation).
-> This is a research prototype. It is **not** an official planning or timetable tool.
+> **Status: prototype** built for the Tech Wave – AI Hackathon, Mauritius 2026 (Track 5: Traffic and Metro Express optimisation).
+> It is a research prototype, **not** an official planning or timetable tool.
 
 ## The problem
-Congestion on the Port Louis–Curepipe corridor costs commuters hours every day. We test **scenarios**
-(feeder buses, park-and-ride, Metro headway changes) and estimate their effect on **door-to-door travel time**.
+The Port Louis–Curepipe corridor (M1 and the Metro Express line) is congested at peak hours, and there is no official
+vehicle count for the route. SmartMove tests **scenarios** (Metro Express use, carpooling, feeder services) and estimates
+their effect on **travel time**.
 
-## Approach (summary)
-1. Split the corridor into origin zones, all travelling to Port Louis.
-2. Estimate door-to-door time per mode (car, bus, Metro, feeder/park-and-ride).
-3. Model how commuters may switch mode when times change (mode-choice model).
-4. Search over scenarios to find the best option (optimiser).
-5. Show before/after results in a Streamlit app with a map.
+## What is in this repository
+| Part | Folder | What it does |
+|---|---|---|
+| Web app (front end) | `web/` | SmartMove interface: ride request, carpool, smart routes |
+| Traffic simulation | `sumo/` | SUMO networks and demand built from OpenStreetMap; before/after runs |
+| Analysis code | `src/`, `scripts/` | Corridor settings, network download, SUMO result parser, setup check |
+| Documentation | `docs/` | Assumptions, data audit, decision log, impact and ethics note, source report |
+| Results | `outputs/` | Summary tables and charts from the simulation runs |
 
-See `docs/assumptions.md` for every assumption and `docs/decisions.md` for the decision log.
-
-## Measured vs simulated – read this first
+## Measured, official, assumed or simulated – read this first
 | Item | Status |
 |---|---|
-| Road network, stops, free-flow car times | Real (OpenStreetMap) |
-| Metro and bus headways, journey times | Published timetables, to be verified (see `docs/data_audit.md`) |
-| Peak congestion slowdown | **Scenario parameter** (run at several values), not a measurement |
-| Zone commuter demand | Census-based where available, otherwise **assumption** |
-| Mode-choice parameters | **Assumptions**, shown with sensitivity ranges |
-| "After" travel times | **Simulated projections**, depend on the assumptions above |
+| Road network and stops | Real (OpenStreetMap) |
+| Fleet totals | Official (Statistics Mauritius), quoted in `docs/sources/` |
+| Peak flow and commuter numbers | **Estimates** from the project data report, not official counts |
+| Traffic demand inside SUMO | **Assumption** (random trips, fixed seeds) |
+| Before/after travel times | **SIMULATED**, they depend on the assumptions above |
 
-No synthetic dataset is presented as observed data.
+No synthetic data is presented as an observation. Every assumption is listed in `docs/assumptions.md`.
+
+## SUMO simulation
+Details and run commands are in [`sumo/README.md`](sumo/README.md).
+**Current status:** two small test networks (central Port Louis and Ébène–Réduit) are in the repository. One baseline run (Port Louis) has completed; before/after results are not yet published.
+Results will appear in `outputs/` and be labelled SIMULATED.
 
 ## Setup
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate    macOS/Linux: source .venv/bin/activate
+# Windows: .venv\Scripts\activate     macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
+python scripts/check_setup.py
 ```
+SUMO is installed separately: <https://sumo.dlr.de/docs/Downloads.php>. Set the `SUMO_HOME` environment variable.
+
+## Running the web app
+`web/index.html` is a static page. Open it in a browser, or run `python -m http.server` inside `web/` and visit
+`http://localhost:8000`. The map needs a Google Maps API key: replace `YOUR_API_KEY` in `web/index.html`
+with your own key (restrict it to your own domains; never commit a real key).
 
 ## Repository layout
 ```
-data/raw/                 original downloads (never edited)
-data/processed/           cleaned tables
-src/                      model code
-app/                      Streamlit demo
-notebooks/                data audit and exploration
-docs/                     assumptions, data audit, decisions, submission checklist
-outputs/                  charts and result tables
+web/          SmartMove web front end (index.html)
+sumo/         SUMO scenarios, one folder per area (see sumo/README.md)
+src/          model and parsing code
+scripts/      helper scripts (setup check)
+outputs/      result tables and charts
+docs/         assumptions, data audit, decisions, impact and ethics, sources/
+data/         raw/ (original downloads, git-ignored) and processed/ (cleaned tables)
 ```
 
 ## Data sources
-Listed with access date and licence in `docs/data_audit.md`. Every dataset, model and API used must appear there.
+Listed in `docs/data_audit.md`. The corridor traffic report is in `docs/sources/`.
 
 ## Team
-Mihivar Luchoomun,
-Trishen Naidoo,
-Suyash Balluck,
-Nikhil Gopaul.
+Mihivar Luchoomun, Trishen Naidoo, Suyash Balluck, Nikhil Gopaul.
 
 ## Limitations
-To be completed with final results. Draft limits: peak slowdown is a scenario parameter, assumed behaviour parameters,
-no real-time data, corridor-level (not junction-level) congestion.
+- Traffic demand in SUMO is assumed, so simulated times show relative effects, not exact prediction.
+- No real-time data and no official vehicle count for the route in 2024–26.
+- The commuter and Metro effect figures are estimates with wide low–high ranges.
+- See `docs/impact_and_ethics.md` for the ethics note.
+
+## Licence
+MIT, see `LICENSE`.

@@ -7,3 +7,10 @@ __pycache__/
 data/raw/*
 !data/raw/.gitkeep
 cache/
+
+# SUMO run outputs (regenerate with sumo -c osm.sumocfg; commit only summary tables in outputs/)
+sumo/**/tripinfos*.xml
+sumo/**/stats*.xml
+sumo/**/edgeData*.xml
+sumo/**/*.rou.xml
+sumo/**/*.rou.alt.xml

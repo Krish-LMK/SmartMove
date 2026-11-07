@@ -2,9 +2,9 @@
 
 <!-- generated on 2026-11-06 01:56:48.895983 by Eclipse SUMO osmWebWizard.py v1.28.0
 <configuration>
-    <net-file value="C:\Users\ballu\OneDrive\Documents\hackathon\2026-11-06-01-54-03\osm.net.xml.gz"/>
-    <output-trip-file value="C:\Users\ballu\OneDrive\Documents\hackathon\2026-11-06-01-54-03\osm.bus.trips.xml"/>
-    <route-file value="C:\Users\ballu\OneDrive\Documents\hackathon\2026-11-06-01-54-03\osm.bus.rou.xml"/>
+    <net-file value=".\osm.net.xml.gz"/>
+    <output-trip-file value=".\osm.bus.trips.xml"/>
+    <route-file value=".\osm.bus.rou.xml"/>
     <prefix value="bus"/>
     <trip-attributes value="departLane=&quot;best&quot;"/>
     <fringe-start-attributes value="departSpeed=&quot;max&quot;"/>
