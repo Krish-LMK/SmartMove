@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartMove Mauritius | Request a Ride, Carpool & Smart Routes</title>
+  <title>SmartMove Mauritius | Waze-Style Live Routes & Smart Carpooling</title>
   
-  <!-- Premium Geometric Typography (Uber Move aesthetic) -->
+  <!-- Premium Geometric Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Firebase v9 Compat SDKs (Modular via CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -25,11 +29,13 @@
       --uber-gray-400: #A6A6A6;
       --uber-gray-600: #545454;
       --uber-white: #FFFFFF;
-      --electric-green: #06C167; /* Uber Green */
+      --electric-green: #06C167;
       --electric-green-glow: rgba(6, 193, 103, 0.2);
       --electric-blue: #276EF1;
       --danger-red: #E11900;
-      --warning-amber: #FFC043;
+      --warning-amber: #FF8800;
+      --hazard-purple: #9C27B0;
+      --hazard-teal: #00B4D8;
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
@@ -56,7 +62,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Utility Strip */
+    /* Top Strip */
     .uber-topbar {
       background: var(--uber-black);
       color: var(--uber-gray-400);
@@ -78,7 +84,7 @@
       border: 1px solid #333;
     }
 
-    /* Uber Style Navigation */
+    /* Header Navigation */
     header.uber-header {
       background: var(--uber-black);
       position: sticky;
@@ -176,9 +182,7 @@
       align-items: center;
       gap: 6px;
     }
-    .btn-pill-light:hover {
-      background: rgba(255, 255, 255, 0.22);
-    }
+    .btn-pill-light:hover { background: rgba(255, 255, 255, 0.22); }
 
     .btn-pill-green {
       background: var(--electric-green);
@@ -208,7 +212,6 @@
       cursor: pointer;
     }
 
-    /* Mobile Drawer */
     .mobile-drawer {
       display: none;
       background: var(--uber-dark);
@@ -223,7 +226,7 @@
       margin-bottom: 4px;
     }
 
-    /* Main Container */
+    /* Content Area */
     main.uber-main {
       flex: 1;
       width: 100%;
@@ -243,7 +246,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Hero & Booking Layout */
+    /* Hero / Ride Request Card */
     .uber-hero-grid {
       display: grid;
       grid-template-columns: 460px 1fr;
@@ -272,7 +275,6 @@
       margin-bottom: 22px;
     }
 
-    /* Uber Route Connector (Dot + Line + Square) */
     .route-connector-wrapper {
       position: relative;
       margin-bottom: 18px;
@@ -332,9 +334,7 @@
       margin: 14px 0 20px 0;
     }
 
-    .uber-select-wrap {
-      position: relative;
-    }
+    .uber-select-wrap { position: relative; }
     .uber-select-wrap select {
       width: 100%;
       background: var(--uber-gray-50);
@@ -382,7 +382,6 @@
       transform: translateY(-1px);
     }
 
-    /* Google Maps Hero Wrapper */
     .uber-hero-map-wrapper {
       background: var(--uber-gray-50);
       border-radius: var(--radius-lg);
@@ -405,7 +404,7 @@
       bottom: 20px;
       left: 20px;
       right: 20px;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       border-radius: var(--radius-md);
       padding: 16px 20px;
@@ -426,7 +425,6 @@
       margin-top: 2px;
     }
 
-    /* Section Titles */
     .section-title {
       font-size: 1.6rem;
       font-weight: 800;
@@ -508,7 +506,7 @@
       text-transform: uppercase;
     }
 
-    /* Matching Rides */
+    /* Ride Match Cards */
     .ride-match-card {
       background: var(--uber-white);
       border: 1px solid var(--uber-gray-200);
@@ -595,7 +593,7 @@
       font-weight: 500;
     }
 
-    /* Cards & Grids */
+    /* Generic Cards */
     .uber-card-white {
       background: var(--uber-white);
       border: 1px solid var(--uber-gray-200);
@@ -626,10 +624,103 @@
       padding: 4px 10px;
       border-radius: var(--radius-pill);
       text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
     .status-badge.confirmed { background: rgba(6, 193, 103, 0.15); color: #038a45; }
     .status-badge.pending { background: rgba(255, 192, 67, 0.2); color: #9A6800; }
     .status-badge.rejected { background: rgba(225, 25, 0, 0.12); color: var(--danger-red); }
+
+    /* Waze-Style Route Warnings & Cards */
+    .route-warning-banner {
+      background: #FFF3CD;
+      border: 1px solid #FFEEBA;
+      color: #856404;
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .route-alt-card {
+      background: var(--uber-gray-50);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .route-alt-card:hover {
+      border-color: var(--uber-black);
+      background: var(--uber-white);
+    }
+    .route-alt-card.active-route {
+      border-color: var(--electric-green);
+      background: rgba(6, 193, 103, 0.05);
+    }
+
+    .incident-type-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #FFF;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Waze-Style InfoWindow Elements */
+    .waze-popup {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #121212;
+      padding: 4px;
+      min-width: 220px;
+    }
+    .waze-popup h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .waze-popup-meta {
+      font-size: 0.76rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .waze-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .btn-waze-verify {
+      background: var(--electric-green);
+      color: #000;
+      border: none;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-waze-clear {
+      background: #EEEEEE;
+      color: #121212;
+      border: 1px solid #DDD;
+      font-weight: 600;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
     /* Modern Table */
     .uber-table {
@@ -652,12 +743,12 @@
       color: var(--uber-black);
     }
 
-    /* Modals & Toasts */
+    /* Modals */
     .uber-modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(4px);
       z-index: 2000;
       align-items: center;
@@ -670,10 +761,12 @@
       border-radius: var(--radius-lg);
       width: 100%;
       max-width: 520px;
-      padding: 32px;
+      padding: 30px;
       box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+      position: relative;
     }
 
+    /* Toasts */
     .uber-toast-container {
       position: fixed;
       bottom: 28px;
@@ -696,6 +789,14 @@
       gap: 12px;
       min-width: 320px;
       border-left: 5px solid var(--electric-green);
+      animation: uberToastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .uber-toast.warning { border-left-color: var(--warning-amber); }
+    .uber-toast.danger { border-left-color: var(--danger-red); }
+
+    @keyframes uberToastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     /* Footer */
@@ -740,7 +841,7 @@
       <span>Port Louis &bull; Rose Hill &bull; Quatre Bornes &bull; Vacoas &bull; Curepipe</span>
     </div>
     <div style="font-size: 0.74rem;">
-      <span style="color: var(--electric-green);"><i class="fa-solid fa-bolt"></i> Google Maps Active</span> &bull; Currency: <strong>MUR</strong>
+      <span id="syncStatusBadge" style="color: var(--electric-green);"><i class="fa-solid fa-wifi"></i> Waze Live Incidents Sync</span> &bull; Currency: <strong>MUR</strong>
     </div>
   </div>
 
@@ -764,7 +865,7 @@
       </div>
 
       <div class="header-actions">
-        <button class="btn-pill-light" onclick="switchView('offerRide')">Become a Driver</button>
+        <button class="btn-pill-light" onclick="showDriverRegisterModal()"><i class="fa-solid fa-plus"></i> Register Vehicle</button>
         <button class="btn-pill-green" onclick="switchView('home')">Request a Ride</button>
         <button class="mobile-hamburger" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
       </div>
@@ -774,7 +875,7 @@
     <div class="mobile-drawer" id="mobileDrawer">
       <button class="nav-tab-btn" data-target="home"><i class="fa-solid fa-car"></i> Ride & Carpool</button>
       <button class="nav-tab-btn" data-target="offerRide"><i class="fa-solid fa-id-card"></i> Driver Dashboard</button>
-      <button class="nav-tab-btn" data-target="smartRoutes"><i class="fa-solid fa-map-location-dot"></i> Smart Routes</button>
+      <button class="nav-tab-btn" data-target="smartRoutes"><i class="fa-solid fa-map-location-dot"></i> Smart Routes & Waze Live</button>
       <button class="nav-tab-btn" data-target="ecoMobility"><i class="fa-solid fa-bicycle"></i> Eco Bikes</button>
       <button class="nav-tab-btn" data-target="freight"><i class="fa-solid fa-truck"></i> Freight Planning</button>
       <button class="nav-tab-btn" data-target="safety"><i class="fa-solid fa-shield-halved"></i> Safety Centre</button>
@@ -785,15 +886,13 @@
   <!-- Main Views -->
   <main class="uber-main">
 
-    <!-- ==================== VIEW 1: HOME & PASSENGER SEARCH ==================== -->
+    <!-- VIEW 1: HOME & PASSENGER SEARCH -->
     <section id="view-home" class="module-view active">
       <div class="uber-hero-grid">
-        <!-- SmartMove Request Widget -->
         <div class="uber-booking-card">
           <div>
             <h1 class="booking-title">Go anywhere in Mauritius with SmartMove</h1>
 
-            <!-- Connected Route Inputs -->
             <div class="route-connector-wrapper">
               <div class="route-connector-line"></div>
               
@@ -822,7 +921,6 @@
               </div>
             </div>
 
-            <!-- Time & Passenger Selection -->
             <div class="booking-inline-grid">
               <div class="uber-select-wrap">
                 <select id="pTime" onchange="filterRides()">
@@ -855,7 +953,6 @@
           </div>
         </div>
 
-        <!-- Google Maps Interactive Preview -->
         <div class="uber-hero-map-wrapper">
           <div id="heroInteractiveMap"></div>
           
@@ -917,15 +1014,14 @@
       <div id="matchingDriversList"></div>
     </section>
 
-    <!-- ==================== VIEW 2: DRIVER DASHBOARD ==================== -->
+    <!-- VIEW 2: DRIVER DASHBOARD -->
     <section id="view-offerRide" class="module-view">
       <div class="section-title">
         <span>Driver Dashboard: Offer Seats & Reduce Traffic</span>
-        <button class="btn-pill-green" onclick="uberToast('Vehicle registration modal simulation opened')"><i class="fa-solid fa-plus"></i> Register New Vehicle</button>
+        <button class="btn-pill-green" onclick="showDriverRegisterModal()"><i class="fa-solid fa-plus"></i> Register New Vehicle</button>
       </div>
 
       <div class="uber-grid-2">
-        <!-- Publish Form -->
         <div class="uber-card-white">
           <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 20px;">Publish a Commute Run</h3>
           
@@ -980,7 +1076,6 @@
           </form>
         </div>
 
-        <!-- Incoming Passenger Requests -->
         <div class="uber-card-white">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
             <h3 style="font-size: 1.25rem; font-weight: 800;">Seat Requests Needing Approval</h3>
@@ -992,16 +1087,22 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 3: SMART ROUTES ==================== -->
+    <!-- VIEW 3: SMART ROUTES (UPGRADED WITH WAZE CROWDSOURCING) -->
     <section id="view-smartRoutes" class="module-view">
       <div class="section-title">
-        <span>Smart Route Planner & Google Traffic Monitor</span>
-        <button class="btn-pill-green" onclick="openHazardModal()"><i class="fa-solid fa-triangle-exclamation"></i> Report Hazard</button>
+        <span>Smart Routes & Live Crowdsourced Road Incidents</span>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-pill-light" style="color: #000; border: 1px solid var(--uber-gray-200);" onclick="toggleMapClickMode()">
+            <i class="fa-solid fa-map-pin" style="color: var(--danger-red);"></i> <span id="mapClickBtnText">Click Map to Report</span>
+          </button>
+          <button class="btn-pill-green" onclick="openHazardModal()"><i class="fa-solid fa-triangle-exclamation"></i> Report Incident</button>
+        </div>
       </div>
 
       <div class="uber-grid-2">
+        <!-- Route Calculation & Alternatives Panel -->
         <div class="uber-card-white">
-          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 14px;">Corridor Route Comparison</h3>
+          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 14px;">Corridor Route Alternatives & Delays</h3>
           
           <div class="uber-grid-2" style="margin-bottom: 16px;">
             <div>
@@ -1022,25 +1123,30 @@
             </div>
           </div>
 
+          <!-- Dynamic Alerts & Routes Box -->
           <div id="routeDetailsBox"></div>
         </div>
 
+        <!-- Google Map with Live Waze-style Incident Markers -->
         <div>
           <div class="uber-hero-map-wrapper">
-            <div id="mainGoogleMap" style="width: 100%; height: 480px;"></div>
+            <div id="mainGoogleMap" style="width: 100%; height: 500px;"></div>
           </div>
 
-          <div class="uber-card-white" style="margin-top: 18px; padding: 18px;">
-            <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">
-              Reported Incidents (<span id="incCount">2</span>)
-            </h4>
-            <div id="incidentsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="uber-card-white" style="margin-top: 18px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase;">
+                Active Community Incidents (<span id="incCount">0</span>)
+              </h4>
+              <small style="color: var(--uber-gray-600); font-size: 0.76rem;">Auto-expires on clear confirmation</small>
+            </div>
+            <div id="incidentsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== VIEW 4: ECO MOBILITY ==================== -->
+    <!-- VIEW 4: ECO MOBILITY -->
     <section id="view-ecoMobility" class="module-view">
       <div class="section-title">
         <span>Eco Mobility & Electric 2-Wheelers</span>
@@ -1073,7 +1179,7 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 5: FREIGHT PLANNING ==================== -->
+    <!-- VIEW 5: FREIGHT PLANNING -->
     <section id="view-freight" class="module-view">
       <div class="section-title">
         <span>Freight Logistics: Off-Peak Shift Engine</span>
@@ -1103,7 +1209,7 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 6: SAFETY ==================== -->
+    <!-- VIEW 6: SAFETY -->
     <section id="view-safety" class="module-view">
       <div class="section-title">
         <span>Safety, Trust & Emergency Protocol</span>
@@ -1117,7 +1223,7 @@
         <div class="uber-card-white">
           <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 14px;">In-Ride Safety Features</h3>
           <button class="btn-uber-black" style="margin-bottom: 12px;" onclick="uberToast('Encrypted tracking link copied to clipboard!')"><i class="fa-solid fa-share-nodes"></i> Share Live Journey Tracking Link</button>
-          <button class="btn-uber-black" style="background: var(--danger-red);" onclick="uberToast('SOS: Mock GPS coordinates pinged to Mauritius dispatch center')"><i class="fa-solid fa-bell"></i> Emergency SOS Demonstration</button>
+          <button class="btn-uber-black" style="background: var(--danger-red);" onclick="uberToast('SOS: Mock GPS coordinates pinged to Mauritius dispatch center', 'danger')"><i class="fa-solid fa-bell"></i> Emergency SOS Demonstration</button>
         </div>
 
         <div class="uber-card-white">
@@ -1129,7 +1235,7 @@
       </div>
     </section>
 
-    <!-- ==================== VIEW 7: ADMIN ANALYTICS ==================== -->
+    <!-- VIEW 7: ADMIN ANALYTICS -->
     <section id="view-admin" class="module-view">
       <div class="section-title">
         <span>Mobility Analytics & Avoided Vehicles Dashboard</span>
@@ -1175,36 +1281,113 @@
 
   </main>
 
-  <!-- Incident Modal -->
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Waze Incident Reporting Modal -->
   <div class="uber-modal-backdrop" id="hazardModal">
     <div class="uber-modal-box">
-      <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 16px;">Report a Road Incident</h3>
+      <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">Report Live Road Incident</h3>
+      <p style="font-size: 0.82rem; color: var(--uber-gray-600); margin-bottom: 18px;">
+        Notify fellow commuters in Mauritius in real-time.
+      </p>
+
       <form onsubmit="submitHazardPin(event)">
         <div style="margin-bottom: 14px;">
-          <label class="form-label-uber">Location</label>
-          <select id="hzLoc" class="uber-input">
-            <option value="Sorèze / Montee S">Sorèze / Montee S (M1 Entrance to Port Louis)</option>
-            <option value="Bagatelle Roundabout">Bagatelle Roundabout</option>
-            <option value="St Jean Intersection">St Jean Intersection (Quatre Bornes)</option>
-          </select>
-        </div>
-        <div style="margin-bottom: 18px;">
           <label class="form-label-uber">Incident Type</label>
-          <select id="hzType" class="uber-input">
-            <option value="Heavy Tailback">Heavy Traffic Tailback</option>
-            <option value="Road Accident">Vehicle Collision</option>
-            <option value="Road Repairs">Lane Narrowing / Road Works</option>
+          <select id="hzType" class="uber-input" required>
+            <option value="Accident">Accident (High Delay)</option>
+            <option value="Heavy Traffic">Heavy Traffic / Jam</option>
+            <option value="Road Works">Road Works / Lane Closure</option>
+            <option value="Broken-down Vehicle">Broken-down Vehicle</option>
+            <option value="Police Checkpoint">Police Checkpoint / Speed Trap</option>
+            <option value="Flooding/Hazard">Flooding / Road Hazard</option>
           </select>
         </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label-uber">Location Mode</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-pill-light" style="flex: 1; color: #000; border: 1px solid var(--uber-gray-200);" onclick="acquireCurrentGPSLocation()">
+              <i class="fa-solid fa-crosshairs" style="color: var(--electric-green);"></i> Use GPS Position
+            </button>
+            <button type="button" class="btn-pill-light" style="flex: 1; color: #000; border: 1px solid var(--uber-gray-200);" onclick="closeHazardModal(); toggleMapClickMode(true);">
+              <i class="fa-solid fa-map-pin" style="color: var(--danger-red);"></i> Pick on Map
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label class="form-label-uber">Location Label / Area</label>
+          <input type="text" id="hzLocationLabel" class="uber-input" placeholder="e.g. Montee S / Sorèze, M1 Motorway" required />
+        </div>
+
+        <!-- Hidden Coordinates (updated by GPS or Map Click) -->
+        <input type="hidden" id="hzLat" value="-20.1985">
+        <input type="hidden" id="hzLng" value="57.4890">
+
+        <div id="hzCoordinatesPreview" style="font-size: 0.76rem; color: var(--uber-gray-600); margin-bottom: 18px;">
+          Coordinates: <span id="hzCoordDisplay">-20.1985, 57.4890 (Default M1 Sorèze)</span>
+        </div>
+
         <div style="display: flex; gap: 10px;">
-          <button type="submit" class="btn-uber-black" style="flex: 1;">Broadcast Pin</button>
+          <button type="submit" class="btn-uber-black" style="flex: 1;">Broadcast to Community</button>
           <button type="button" class="btn-pill-light" style="color: var(--uber-black); border: 1px solid var(--uber-gray-200);" onclick="closeHazardModal()">Cancel</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Toast Container -->
+  <!-- Driver Registration Modal -->
+  <div class="uber-modal-backdrop" id="driverVehicleModal">
+    <div class="uber-modal-box">
+      <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 6px;">Register New Vehicle & Driver</h3>
+      <p style="font-size: 0.82rem; color: var(--uber-gray-600); margin-bottom: 18px;">
+        Add your car to the SmartMove Mauritius verified commuter pool.
+      </p>
+
+      <form onsubmit="handleDriverVehicleRegister(event)">
+        <div class="uber-grid-2" style="gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label-uber">Driver Full Name</label>
+            <input type="text" id="regDriverName" class="uber-input" placeholder="Devin Mootoo" required />
+          </div>
+          <div>
+            <label class="form-label-uber">Phone Number</label>
+            <input type="tel" id="regDriverPhone" class="uber-input" placeholder="+230 5..." required />
+          </div>
+        </div>
+
+        <div class="uber-grid-2" style="gap: 12px; margin-bottom: 12px;">
+          <div>
+            <label class="form-label-uber">Vehicle Make & Model</label>
+            <input type="text" id="regVehicleModel" class="uber-input" placeholder="Honda Vezel Hybrid" required />
+          </div>
+          <div>
+            <label class="form-label-uber">NLTA Plate Number</label>
+            <input type="text" id="regPlateNumber" class="uber-input" placeholder="2451 MR 21" required />
+          </div>
+        </div>
+
+        <div class="uber-grid-2" style="gap: 12px; margin-bottom: 18px;">
+          <div>
+            <label class="form-label-uber">Available Passenger Seats</label>
+            <input type="number" id="regAvailableSeats" class="uber-input" min="1" max="6" value="3" required />
+          </div>
+          <div>
+            <label class="form-label-uber">Base Contribution (MUR)</label>
+            <input type="number" id="regContribution" class="uber-input" min="30" max="250" value="50" required />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="submit" class="btn-uber-black" style="flex: 1;">Save Vehicle Profile</button>
+          <button type="button" class="btn-pill-light" style="color: var(--uber-black); border: 1px solid var(--uber-gray-200);" onclick="closeDriverRegisterModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
   <div class="uber-toast-container" id="toastBox"></div>
 
   <!-- Footer -->
@@ -1215,13 +1398,78 @@
         <p style="font-size: 0.82rem; margin-top: 4px;">Smart Mobility Technology Platform &bull; Port Louis &harr; Curepipe Pilot</p>
       </div>
       <div style="font-size: 0.82rem;">
-        &copy; 2026 SmartMove Mauritius &bull; Powered by Google Maps Platform
+        &copy; 2026 SmartMove Mauritius &bull; Powered by Google Maps Platform & Waze Crowd Intelligence
       </div>
     </div>
   </footer>
 
-  <!-- SCRIPT LOGIC -->
+  <!-- ==================== SCRIPT LOGIC ==================== -->
   <script>
+    /* =======================================================
+       1. FIREBASE CONFIGURATION (REPLACE WITH YOUR KEYS)
+       ======================================================= */
+    const firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+
+    let firestoreDb = null;
+    let isFirebaseEnabled = false;
+
+    // Anonymous persistent reporter ID
+    let reporterId = localStorage.getItem("smartmove_reporter_id");
+    if (!reporterId) {
+      reporterId = "rep_" + Math.random().toString(36).substring(2, 10);
+      localStorage.setItem("smartmove_reporter_id", reporterId);
+    }
+
+    /* =======================================================
+       2. INCIDENT TYPES & WAZE METADATA
+       ======================================================= */
+    const INCIDENT_CONFIG = {
+      "Accident": {
+        color: "#E11900", // Red
+        ttlMinutes: 45,
+        delayMinutes: 10,
+        icon: "fa-car-burst"
+      },
+      "Heavy Traffic": {
+        color: "#FF8800", // Amber
+        ttlMinutes: 30,
+        delayMinutes: 6,
+        icon: "fa-traffic-light"
+      },
+      "Road Works": {
+        color: "#E65100", // Dark Orange
+        ttlMinutes: 360, // 6 Hours
+        delayMinutes: 4,
+        icon: "fa-person-digging"
+      },
+      "Broken-down Vehicle": {
+        color: "#9C27B0", // Purple
+        ttlMinutes: 60,
+        delayMinutes: 4,
+        icon: "fa-truck-pickup"
+      },
+      "Police Checkpoint": {
+        color: "#276EF1", // Blue
+        ttlMinutes: 60,
+        delayMinutes: 3,
+        icon: "fa-shield-halved"
+      },
+      "Flooding/Hazard": {
+        color: "#00B4D8", // Teal
+        ttlMinutes: 60,
+        delayMinutes: 8,
+        icon: "fa-water"
+      }
+    };
+
+    // Corridor Nodes
     const CORRIDOR = {
       "Port Louis": { lat: -20.1609, lng: 57.5012, idx: 5, addr: "Victoria Urban Terminal, Port Louis, Mauritius" },
       "Rose Hill": { lat: -20.2443, lng: 57.4716, idx: 4, addr: "Rose Hill, Mauritius" },
@@ -1231,27 +1479,37 @@
       "Curepipe": { lat: -20.3186, lng: 57.5262, idx: 1, addr: "Curepipe, Mauritius" }
     };
 
+    // Rides & Bookings (State)
     let rides = JSON.parse(localStorage.getItem("smartmove_rides")) || [
       { id: "R-1", driverName: "Kishan Ramgoolam", origin: "Curepipe", destination: "Port Louis", time: "07:30", availableSeats: 3, totalSeats: 4, priceMur: 50, vehicle: "Toyota Aqua Hybrid", rating: 4.9, corridor: ["Curepipe", "Vacoas", "Quatre Bornes", "Rose Hill", "Port Louis"] },
       { id: "R-2", driverName: "Anishta Bheenick", origin: "Quatre Bornes", destination: "Port Louis", time: "07:45", availableSeats: 2, totalSeats: 3, priceMur: 55, vehicle: "Nissan Leaf Electric", rating: 4.8, corridor: ["Quatre Bornes", "Ebene", "Port Louis"] },
       { id: "R-3", driverName: "Jean-Marc Duval", origin: "Vacoas", destination: "Ebene", time: "08:00", availableSeats: 3, totalSeats: 4, priceMur: 45, vehicle: "Honda Fit Hybrid", rating: 5.0, corridor: ["Vacoas", "Quatre Bornes", "Ebene"] }
     ];
-
     let bookings = JSON.parse(localStorage.getItem("smartmove_bookings")) || [];
-    let incidents = [
-      { loc: "Sorèze / Montee S", type: "Heavy Tailback", time: "10 mins ago", lat: -20.1985, lng: 57.4890 },
-      { loc: "Bagatelle Roundabout", type: "Road Accident", time: "25 mins ago", lat: -20.2245, lng: 57.4985 }
-    ];
 
+    // Incidents Collection (In-Memory + Firebase / LocalStorage)
+    let activeIncidents = [];
+    let mapIncidentMarkers = [];
+    let activeAlternativePolylines = [];
+    let activeAlternativeRoutesData = [];
+    let currentSelectedRouteIndex = 0;
+
+    // Google Maps Instances
     let heroMap, mainMap;
     let heroDirectionsService, heroDirectionsRenderer;
-    let mainDirectionsService, mainDirectionsRenderer;
+    let mainDirectionsService;
+    let mapClickModeEnabled = false;
+    let mapClickTempMarker = null;
+    let mainMapInfoWindow = null;
 
+    /* =======================================================
+       3. DOM READY INITIALIZATION
+       ======================================================= */
     document.addEventListener("DOMContentLoaded", () => {
       setupNavigation();
+      initStorageBackend();
       filterRides();
       renderDriverRequests();
-      renderIncidents();
       updateAnalytics();
       calcFreight();
     });
@@ -1271,6 +1529,10 @@
     function switchView(viewId) {
       document.querySelectorAll(".nav-tab-btn").forEach(b => b.classList.toggle("active", b.getAttribute("data-target") === viewId));
       document.querySelectorAll(".module-view").forEach(v => v.classList.toggle("active", v.id === "view-" + viewId));
+      if (viewId === "smartRoutes" && mainMap) {
+        google.maps.event.trigger(mainMap, "resize");
+        updateGoogleRoute();
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1284,7 +1546,665 @@
       uberToast(`Selected SmartMove ${tier}`);
     }
 
-    /* MATCHING ENGINE */
+    /* =======================================================
+       4. STORAGE ENGINE (FIRESTORE OR LOCALSTORAGE SYNC)
+       ======================================================= */
+    function initStorageBackend() {
+      if (firebaseConfig.projectId && firebaseConfig.apiKey) {
+        try {
+          firebase.initializeApp(firebaseConfig);
+          firestoreDb = firebase.firestore();
+          isFirebaseEnabled = true;
+          document.getElementById("syncStatusBadge").innerHTML = `<i class="fa-solid fa-cloud"></i> Firestore Live Cloud Sync`;
+
+          // Subscribe to real-time snapshots
+          firestoreDb.collection("incidents").onSnapshot(snapshot => {
+            const list = [];
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              data.id = doc.id;
+              list.push(data);
+            });
+            handleIncidentsUpdate(list);
+          }, err => {
+            console.warn("Firestore listener failed, falling back to local:", err);
+            initLocalStorageFallback();
+          });
+          return;
+        } catch (e) {
+          console.warn("Firebase Init failed, using localStorage fallback:", e);
+        }
+      }
+      initLocalStorageFallback();
+    }
+
+    function initLocalStorageFallback() {
+      isFirebaseEnabled = false;
+      document.getElementById("syncStatusBadge").innerHTML = `<i class="fa-solid fa-database"></i> LocalStorage Incident Sync`;
+
+      let seed = JSON.parse(localStorage.getItem("smartmove_live_incidents"));
+      if (!seed || seed.length === 0) {
+        seed = [
+          {
+            id: "inc_init_1",
+            type: "Heavy Traffic",
+            lat: -20.1985,
+            lng: 57.4890,
+            locationLabel: "Sorèze / Montee S, M1 Motorway",
+            createdAt: Date.now() - 10 * 60 * 1000,
+            expiresAt: Date.now() + 20 * 60 * 1000,
+            confirmations: 2,
+            dismissals: 0,
+            reporterId: "seed_1",
+            voters: { seed_1: "confirmed" }
+          },
+          {
+            id: "inc_init_2",
+            type: "Accident",
+            lat: -20.2245,
+            lng: 57.4985,
+            locationLabel: "Bagatelle Roundabout Slip Road",
+            createdAt: Date.now() - 15 * 60 * 1000,
+            expiresAt: Date.now() + 30 * 60 * 1000,
+            confirmations: 3,
+            dismissals: 0,
+            reporterId: "seed_2",
+            voters: { seed_2: "confirmed" }
+          }
+        ];
+        localStorage.setItem("smartmove_live_incidents", JSON.stringify(seed));
+      }
+
+      handleIncidentsUpdate(seed);
+
+      // Multi-tab sync via storage event
+      window.addEventListener("storage", (e) => {
+        if (e.key === "smartmove_live_incidents") {
+          handleIncidentsUpdate(JSON.parse(e.newValue || "[]"));
+        }
+      });
+    }
+
+    function handleIncidentsUpdate(rawList) {
+      const now = Date.now();
+      // Filter out expired or dismissed (dismissals >= 3)
+      const valid = rawList.filter(item => {
+        const notExpired = item.expiresAt > now;
+        const notDismissed = (item.dismissals || 0) < 3;
+        return notExpired && notDismissed;
+      });
+
+      // Sort newest first
+      valid.sort((a, b) => b.createdAt - a.createdAt);
+
+      activeIncidents = valid;
+      renderIncidentMarkersOnMap();
+      renderIncidentFeedList();
+
+      // If routes are drawn, re-evaluate route awareness
+      if (activeAlternativeRoutesData.length > 0) {
+        evaluateIncidentsOnRoutes();
+      }
+    }
+
+    async function persistIncident(incidentObj) {
+      if (isFirebaseEnabled && firestoreDb) {
+        try {
+          await firestoreDb.collection("incidents").doc(incidentObj.id).set(incidentObj);
+          return;
+        } catch (e) {
+          console.error("Firestore save failed, fallback to local:", e);
+        }
+      }
+      // LocalStorage save
+      const current = JSON.parse(localStorage.getItem("smartmove_live_incidents") || "[]");
+      const idx = current.findIndex(i => i.id === incidentObj.id);
+      if (idx > -1) {
+        current[idx] = incidentObj;
+      } else {
+        current.unshift(incidentObj);
+      }
+      localStorage.setItem("smartmove_live_incidents", JSON.stringify(current));
+      handleIncidentsUpdate(current);
+    }
+
+    /* =======================================================
+       5. GOOGLE MAPS API INTEGRATION (PLACES, GEOMETRY)
+       ======================================================= */
+    window.initGoogleMap = function() {
+      const mauritiusCenter = { lat: -20.2443, lng: 57.4939 };
+
+      // 1. Hero Map (Home View)
+      heroMap = new google.maps.Map(document.getElementById("heroInteractiveMap"), {
+        center: mauritiusCenter,
+        zoom: 12,
+        mapTypeControl: false,
+        streetViewControl: false,
+        styles: [
+          { featureType: "all", elementType: "geometry", stylers: [{ saturation: -20 }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ lightness: 20 }] },
+          { featureType: "poi", stylers: [{ visibility: "off" }] }
+        ]
+      });
+      new google.maps.TrafficLayer().setMap(heroMap);
+      heroDirectionsService = new google.maps.DirectionsService();
+      heroDirectionsRenderer = new google.maps.DirectionsRenderer({
+        map: heroMap,
+        polylineOptions: { strokeColor: "#000000", strokeWeight: 5 }
+      });
+
+      // 2. Main Smart Routes Map
+      mainMap = new google.maps.Map(document.getElementById("mainGoogleMap"), {
+        center: mauritiusCenter,
+        zoom: 12,
+        mapTypeControl: false,
+        streetViewControl: true
+      });
+      new google.maps.TrafficLayer().setMap(mainMap);
+      mainDirectionsService = new google.maps.DirectionsService();
+      mainMapInfoWindow = new google.maps.InfoWindow();
+
+      // Click to pick incident pin listener
+      google.maps.event.addListener(mainMap, "click", (event) => {
+        if (!mapClickModeEnabled) return;
+        handleManualMapClick(event.latLng);
+      });
+
+      syncHeroRoute();
+      updateGoogleRoute();
+      renderIncidentMarkersOnMap();
+    };
+
+    /* =======================================================
+       6. WAZE INCIDENT PIN RENDERING & VOTING
+       ======================================================= */
+    function createIncidentPinSvg(type) {
+      const cfg = INCIDENT_CONFIG[type] || INCIDENT_CONFIG["Accident"];
+      const color = cfg.color;
+      // High resolution colored SVG marker with white border
+      return {
+        url: `data:image/svg+xml;utf-8,` + encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+            <path d="M18 0C8.06 0 0 8.06 0 18C0 31.5 18 44 18 44C18 44 36 31.5 36 18C36 8.06 27.94 0 18 0Z" fill="${color}" stroke="#FFFFFF" stroke-width="2.5"/>
+            <circle cx="18" cy="18" r="8.5" fill="#FFFFFF"/>
+            <circle cx="18" cy="18" r="5" fill="${color}"/>
+          </svg>
+        `),
+        scaledSize: new google.maps.Size(32, 40),
+        anchor: new google.maps.Point(16, 40)
+      };
+    }
+
+    function renderIncidentMarkersOnMap() {
+      if (!mainMap) return;
+
+      // Clear old markers
+      mapIncidentMarkers.forEach(m => m.setMap(null));
+      mapIncidentMarkers = [];
+
+      activeIncidents.forEach(inc => {
+        const marker = new google.maps.Marker({
+          position: { lat: inc.lat, lng: inc.lng },
+          map: mainMap,
+          title: `${inc.type}: ${inc.locationLabel}`,
+          icon: createIncidentPinSvg(inc.type),
+          animation: google.maps.Animation.DROP
+        });
+
+        marker.addListener("click", () => {
+          openIncidentInfoWindow(marker, inc);
+        });
+
+        mapIncidentMarkers.push(marker);
+      });
+    }
+
+    function openIncidentInfoWindow(marker, inc) {
+      const minsAgo = Math.max(1, Math.floor((Date.now() - inc.createdAt) / 60000));
+      const cfg = INCIDENT_CONFIG[inc.type] || INCIDENT_CONFIG["Accident"];
+      const voterAction = (inc.voters && inc.voters[reporterId]) || null;
+
+      let actionButtonsHtml = "";
+      if (voterAction) {
+        actionButtonsHtml = `<div style="font-size:0.75rem; color:#666; margin-top:8px;"><i class="fa-solid fa-check"></i> You marked this as <b>${voterAction}</b></div>`;
+      } else {
+        actionButtonsHtml = `
+          <div class="waze-actions">
+            <button class="btn-waze-verify" onclick="voteIncident('${inc.id}', 'confirm')"><i class="fa-solid fa-thumbs-up"></i> Still There</button>
+            <button class="btn-waze-clear" onclick="voteIncident('${inc.id}', 'dismiss')"><i class="fa-solid fa-check-double"></i> Cleared</button>
+          </div>
+        `;
+      }
+
+      const content = `
+        <div class="waze-popup">
+          <h4>
+            <span style="color:${cfg.color};"><i class="fa-solid ${cfg.icon}"></i></span>
+            ${inc.type}
+          </h4>
+          <div style="font-weight:700; font-size:0.85rem; margin-bottom:2px;">${inc.locationLabel}</div>
+          <div class="waze-popup-meta">
+            Reported ${minsAgo} mins ago &bull; <b>${inc.confirmations || 1}</b> confirmed
+          </div>
+          ${actionButtonsHtml}
+        </div>
+      `;
+
+      mainMapInfoWindow.setContent(content);
+      mainMapInfoWindow.open(mainMap, marker);
+    }
+
+    async function voteIncident(incidentId, action) {
+      const inc = activeIncidents.find(i => i.id === incidentId);
+      if (!inc) return;
+
+      if (!inc.voters) inc.voters = {};
+      if (inc.voters[reporterId]) {
+        uberToast("You have already verified this incident", "warning");
+        return;
+      }
+
+      inc.voters[reporterId] = action === "confirm" ? "confirmed" : "cleared";
+
+      if (action === "confirm") {
+        inc.confirmations = (inc.confirmations || 1) + 1;
+        // Extend expiry by 15 mins
+        inc.expiresAt = (inc.expiresAt || Date.now()) + 15 * 60 * 1000;
+        uberToast("Thanks for confirming! Expiry extended by 15 mins.");
+      } else {
+        inc.dismissals = (inc.dismissals || 0) + 1;
+        if (inc.dismissals >= 3) {
+          uberToast("Incident verified as cleared by community. Removed.");
+        } else {
+          uberToast("Marked as cleared. Awaiting additional confirmation.");
+        }
+      }
+
+      await persistIncident(inc);
+      if (mainMapInfoWindow) mainMapInfoWindow.close();
+    }
+
+    function renderIncidentFeedList() {
+      const c = document.getElementById("incidentsList");
+      const countElem = document.getElementById("incCount");
+      c.innerHTML = "";
+      countElem.innerText = activeIncidents.length;
+
+      if (activeIncidents.length === 0) {
+        c.innerHTML = `<div style="font-size:0.84rem; color:var(--uber-gray-600); padding:8px 0;">No road incidents currently reported. Roads are clear!</div>`;
+        return;
+      }
+
+      activeIncidents.forEach(inc => {
+        const cfg = INCIDENT_CONFIG[inc.type] || INCIDENT_CONFIG["Accident"];
+        const minsAgo = Math.max(1, Math.floor((Date.now() - inc.createdAt) / 60000));
+
+        const item = document.createElement("div");
+        item.style = "background: var(--uber-gray-50); padding: 12px 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.15s;";
+        item.onmouseenter = () => item.style.background = "#EEEEEE";
+        item.onmouseleave = () => item.style.background = "var(--uber-gray-50)";
+        item.onclick = () => {
+          mainMap.panTo({ lat: inc.lat, lng: inc.lng });
+          mainMap.setZoom(15);
+          const marker = mapIncidentMarkers.find(m => Math.abs(m.getPosition().lat() - inc.lat) < 0.0001);
+          if (marker) openIncidentInfoWindow(marker, inc);
+        };
+
+        item.innerHTML = `
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="incident-type-tag" style="background:${cfg.color};">
+                <i class="fa-solid ${cfg.icon}"></i> ${inc.type}
+              </span>
+              <strong style="font-size:0.86rem; color:var(--uber-black);">${inc.locationLabel}</strong>
+            </div>
+            <div style="font-size:0.75rem; color:var(--uber-gray-600); margin-top:3px;">
+              ${minsAgo}m ago &bull; ${inc.confirmations || 1} confirmed &bull; Delay ~${cfg.delayMinutes}m
+            </div>
+          </div>
+          <button class="btn-pill-light" style="padding:4px 10px; font-size:0.75rem; color:#000; border:1px solid #CCC;" onclick="event.stopPropagation(); voteIncident('${inc.id}', 'confirm')">
+            <i class="fa-solid fa-thumbs-up" style="color:var(--electric-green);"></i>
+          </button>
+        `;
+        c.appendChild(item);
+      });
+    }
+
+    /* =======================================================
+       7. LOCATION CAPTURE & PIN DROP ENGINE
+       ======================================================= */
+    function acquireCurrentGPSLocation() {
+      if (!navigator.geolocation) {
+        uberToast("Geolocation not supported by your browser", "danger");
+        return;
+      }
+
+      uberToast("Fetching accurate GPS location...");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          document.getElementById("hzLat").value = lat;
+          document.getElementById("hzLng").value = lng;
+          document.getElementById("hzCoordDisplay").innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)} (GPS Verified)`;
+          
+          // Reverse geocode to human readable label
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              document.getElementById("hzLocationLabel").value = results[0].formatted_address.split(",")[0] + ", Mauritius";
+            }
+          });
+
+          uberToast("GPS location secured!", "success");
+        },
+        (err) => {
+          console.warn("GPS error:", err);
+          uberToast("Location permission denied. Please click on the map to drop the pin.", "warning");
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    function toggleMapClickMode(explicitOn = false) {
+      mapClickModeEnabled = explicitOn ? true : !mapClickModeEnabled;
+      const btnText = document.getElementById("mapClickBtnText");
+
+      if (mapClickModeEnabled) {
+        btnText.innerText = "Click on Map Now...";
+        uberToast("Map-click active: Click on the road to place the incident pin", "warning");
+        if (mainMap) mainMap.setOptions({ draggableCursor: "crosshair" });
+      } else {
+        btnText.innerText = "Click Map to Report";
+        if (mainMap) mainMap.setOptions({ draggableCursor: null });
+        if (mapClickTempMarker) {
+          mapClickTempMarker.setMap(null);
+          mapClickTempMarker = null;
+        }
+      }
+    }
+
+    function handleManualMapClick(latLng) {
+      const lat = latLng.lat();
+      const lng = latLng.lng();
+
+      if (mapClickTempMarker) mapClickTempMarker.setMap(null);
+      mapClickTempMarker = new google.maps.Marker({
+        position: latLng,
+        map: mainMap,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 7,
+          fillColor: "#000",
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: "#FFF"
+        }
+      });
+
+      document.getElementById("hzLat").value = lat;
+      document.getElementById("hzLng").value = lng;
+      document.getElementById("hzCoordDisplay").innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)} (Picked on Map)`;
+
+      // Reverse geocode
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ location: latLng }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          document.getElementById("hzLocationLabel").value = results[0].formatted_address.split(",")[0];
+        } else {
+          document.getElementById("hzLocationLabel").value = `Road Point (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
+        }
+        openHazardModal();
+        toggleMapClickMode(false);
+      });
+    }
+
+    async function submitHazardPin(e) {
+      e.preventDefault();
+      const type = document.getElementById("hzType").value;
+      const locationLabel = document.getElementById("hzLocationLabel").value;
+      const lat = parseFloat(document.getElementById("hzLat").value);
+      const lng = parseFloat(document.getElementById("hzLng").value);
+      const cfg = INCIDENT_CONFIG[type] || INCIDENT_CONFIG["Accident"];
+
+      const newIncident = {
+        id: "inc_" + Date.now() + "_" + Math.random().toString(36).substring(2, 6),
+        type: type,
+        lat: lat,
+        lng: lng,
+        locationLabel: locationLabel,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + cfg.ttlMinutes * 60 * 1000,
+        confirmations: 1,
+        dismissals: 0,
+        reporterId: reporterId,
+        voters: { [reporterId]: "confirmed" }
+      };
+
+      await persistIncident(newIncident);
+      closeHazardModal();
+      uberToast(`Reported ${type} broadcasted to all commuters!`);
+
+      // Check if incident is near selected route
+      checkIfIncidentImpactsCurrentRoute(newIncident);
+    }
+
+    /* =======================================================
+       8. ROUTE-AWARE ALTERNATIVES & GEOMETRY EDGE CHECKING
+       ======================================================= */
+    function updateGoogleRoute() {
+      if (!mainDirectionsService) return;
+      const origin = document.getElementById("routeSelectStart").value;
+      const dest = document.getElementById("routeSelectEnd").value;
+
+      mainDirectionsService.route({
+        origin: origin,
+        destination: dest,
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+        drivingOptions: {
+          departureTime: new Date()
+        }
+      }, (res, status) => {
+        if (status === "OK") {
+          activeAlternativeRoutesData = res.routes;
+          evaluateIncidentsOnRoutes();
+        } else {
+          document.getElementById("routeDetailsBox").innerHTML = `
+            <div style="font-size:0.86rem; color:var(--uber-gray-600); padding:16px;">
+              Directions calculation unavailable for this corridor.
+            </div>`;
+        }
+      });
+    }
+
+    function evaluateIncidentsOnRoutes() {
+      // Clear alternative polylines on map
+      activeAlternativePolylines.forEach(p => p.setMap(null));
+      activeAlternativePolylines = [];
+
+      const evaluatedRoutes = [];
+
+      activeAlternativeRoutesData.forEach((route, rIndex) => {
+        const polylinePath = route.overview_path;
+        const polylineObj = new google.maps.Polyline({ path: polylinePath });
+
+        // Tolerance: ~150 meters in degrees (~0.00135 deg)
+        const TOLERANCE_DEGREES = 0.00135;
+        const matchingIncidents = [];
+        let totalIncidentDelayMins = 0;
+
+        activeIncidents.forEach(inc => {
+          const incLatLng = new google.maps.LatLng(inc.lat, inc.lng);
+          const sitsOnRoute = google.maps.geometry.poly.isLocationOnEdge(incLatLng, polylineObj, TOLERANCE_DEGREES);
+          if (sitsOnRoute) {
+            matchingIncidents.push(inc);
+            const cfg = INCIDENT_CONFIG[inc.type] || INCIDENT_CONFIG["Accident"];
+            totalIncidentDelayMins += cfg.delayMinutes;
+          }
+        });
+
+        const leg = route.legs[0];
+        const normalDurationSec = leg.duration_in_traffic ? leg.duration_in_traffic.value : leg.duration.value;
+        const effectiveTotalDurationSec = normalDurationSec + (totalIncidentDelayMins * 60);
+
+        evaluatedRoutes.push({
+          index: rIndex,
+          routeSummary: route.summary || `Via Corridor Alt ${rIndex + 1}`,
+          distanceText: leg.distance.text,
+          baseDurationText: leg.duration_in_traffic ? leg.duration_in_traffic.text : leg.duration.text,
+          effectiveDurationMins: Math.round(effectiveTotalDurationSec / 60),
+          incidentDelayMins: totalIncidentDelayMins,
+          incidents: matchingIncidents,
+          rawRoute: route
+        });
+      });
+
+      // Find route with lowest effective duration
+      let bestIndex = 0;
+      let minDuration = Infinity;
+      evaluatedRoutes.forEach(r => {
+        if (r.effectiveDurationMins < minDuration) {
+          minDuration = r.effectiveDurationMins;
+          bestIndex = r.index;
+        }
+      });
+      currentSelectedRouteIndex = bestIndex;
+
+      // Draw all alternative polylines (best is green, others grey)
+      evaluatedRoutes.forEach(r => {
+        const isOptimal = (r.index === currentSelectedRouteIndex);
+        const poly = new google.maps.Polyline({
+          path: r.rawRoute.overview_path,
+          map: mainMap,
+          strokeColor: isOptimal ? "#06C167" : "#8E8E93",
+          strokeWeight: isOptimal ? 6 : 4,
+          strokeOpacity: isOptimal ? 0.95 : 0.6,
+          zIndex: isOptimal ? 50 : 10
+        });
+
+        poly.addListener("click", () => {
+          selectAlternativeRoute(r.index);
+        });
+
+        activeAlternativePolylines.push({ polyline: poly, routeIndex: r.index });
+      });
+
+      // Fit map bounds to routes
+      const bounds = new google.maps.LatLngBounds();
+      evaluatedRoutes[currentSelectedRouteIndex].rawRoute.overview_path.forEach(pt => bounds.extend(pt));
+      mainMap.fitBounds(bounds);
+
+      renderRouteAlternativesUI(evaluatedRoutes);
+    }
+
+    function selectAlternativeRoute(index) {
+      currentSelectedRouteIndex = index;
+      activeAlternativePolylines.forEach(item => {
+        const isSelected = (item.routeIndex === index);
+        item.polyline.setOptions({
+          strokeColor: isSelected ? "#06C167" : "#8E8E93",
+          strokeWeight: isSelected ? 6 : 4,
+          strokeOpacity: isSelected ? 0.95 : 0.6,
+          zIndex: isSelected ? 50 : 10
+        });
+      });
+      evaluateIncidentsOnRoutes();
+    }
+
+    function renderRouteAlternativesUI(evaluatedRoutes) {
+      const box = document.getElementById("routeDetailsBox");
+      box.innerHTML = "";
+
+      const currentRoute = evaluatedRoutes.find(r => r.index === currentSelectedRouteIndex) || evaluatedRoutes[0];
+
+      // Route Warning Banner if incidents exist
+      if (currentRoute.incidents.length > 0) {
+        const incidentTypes = [...new Set(currentRoute.incidents.map(i => i.type))].join(", ");
+        box.innerHTML += `
+          <div class="route-warning-banner">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:1.3rem; color:var(--danger-red);"></i>
+            <div>
+              <strong>${currentRoute.incidents.length} incident(s) detected on this route</strong>
+              <div style="font-size:0.78rem; margin-top:2px;">
+                Includes ${incidentTypes}. Est. congestion delay: <b>+${currentRoute.incidentDelayMins} mins</b>.
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Render cards for all alternatives
+      evaluatedRoutes.forEach(r => {
+        const isCurrent = (r.index === currentSelectedRouteIndex);
+        const card = document.createElement("div");
+        card.className = `route-alt-card ${isCurrent ? "active-route" : ""}`;
+        card.onclick = () => selectAlternativeRoute(r.index);
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <strong style="color:var(--uber-black); font-size:0.95rem;">${r.routeSummary}</strong>
+              ${isCurrent ? `<span class="status-badge confirmed" style="margin-left:6px;"><i class="fa-solid fa-star"></i> Recommended</span>` : ""}
+            </div>
+            <div style="font-weight:800; font-size:1.05rem; color:${r.incidentDelayMins > 0 ? 'var(--danger-red)' : 'var(--uber-black)'};">
+              ${r.effectiveDurationMins} min
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--uber-gray-600); margin-top:6px;">
+            <span>${r.distanceText} &bull; Traffic baseline: ${r.baseDurationText}</span>
+            <span>${r.incidents.length > 0 ? `<b style="color:var(--danger-red);">${r.incidents.length} Hazard(s)</b>` : `<span style="color:var(--electric-green);">Clear Flow</span>`}</span>
+          </div>
+        `;
+        box.appendChild(card);
+      });
+    }
+
+    function checkIfIncidentImpactsCurrentRoute(newIncident) {
+      if (!activeAlternativeRoutesData || activeAlternativeRoutesData.length === 0) return;
+      const currentRoute = activeAlternativeRoutesData[currentSelectedRouteIndex];
+      if (!currentRoute) return;
+
+      const poly = new google.maps.Polyline({ path: currentRoute.overview_path });
+      const sitsOnEdge = google.maps.geometry.poly.isLocationOnEdge(
+        new google.maps.LatLng(newIncident.lat, newIncident.lng),
+        poly,
+        0.0015
+      );
+
+      if (sitsOnEdge) {
+        uberToast(`Alert: New ${newIncident.type} reported directly on your active route!`, "danger");
+      }
+    }
+
+    /* =======================================================
+       9. HERO MAP ROUTE PREVIEW (HOME VIEW)
+       ======================================================= */
+    function syncHeroRoute() {
+      if (!heroDirectionsService) return;
+      const p = document.getElementById("pPickup").value;
+      const d = document.getElementById("pDropoff").value;
+
+      const originAddr = CORRIDOR[p]?.addr || "Curepipe, Mauritius";
+      const destAddr = CORRIDOR[d]?.addr || "Victoria Urban Terminal, Port Louis, Mauritius";
+
+      heroDirectionsService.route({
+        origin: originAddr,
+        destination: destAddr,
+        travelMode: google.maps.TravelMode.DRIVING
+      }, (res, status) => {
+        if (status === "OK") {
+          heroDirectionsRenderer.setDirections(res);
+          const leg = res.routes[0].legs[0];
+          document.getElementById("overlayRouteTitle").innerText = `${p} → ${d}`;
+          document.getElementById("overlayRouteDuration").innerText = `${leg.duration.text} (${leg.distance.text}) via M1 Corridor`;
+        }
+      });
+    }
+
+    /* =======================================================
+       10. CARPOOLING MATCHING & DRIVER ENGINE
+       ======================================================= */
     function filterRides() {
       const p = document.getElementById("pPickup").value;
       const d = document.getElementById("pDropoff").value;
@@ -1353,7 +2273,7 @@
     function requestSeat(rideId, pickup, dropoff) {
       const r = rides.find(item => item.id === rideId);
       if (!r || r.availableSeats <= 0) {
-        uberToast("No seats left in this carpool");
+        uberToast("No seats left in this carpool", "warning");
         return;
       }
 
@@ -1432,7 +2352,7 @@
       const origin = document.getElementById("dFrom").value;
       const destination = document.getElementById("dTo").value;
       if (origin === destination) {
-        uberToast("Origin and destination cannot be identical.");
+        uberToast("Origin and destination cannot be identical.", "warning");
         return;
       }
 
@@ -1457,6 +2377,35 @@
       updateAnalytics();
       uberToast(`SmartMove ride published along ${origin} -> ${destination}!`);
       switchView("home");
+    }
+
+    /* =======================================================
+       11. DRIVER VEHICLE REGISTRATION (FIXED & WIRED)
+       ======================================================= */
+    function showDriverRegisterModal() {
+      document.getElementById("driverVehicleModal").classList.add("open");
+    }
+    function closeDriverRegisterModal() {
+      document.getElementById("driverVehicleModal").classList.remove("open");
+    }
+
+    function handleDriverVehicleRegister(e) {
+      e.preventDefault();
+      const dName = document.getElementById("regDriverName").value.trim();
+      const carModel = document.getElementById("regVehicleModel").value.trim();
+      const plate = document.getElementById("regPlateNumber").value.trim();
+      const seats = parseInt(document.getElementById("regAvailableSeats").value, 10);
+      const mur = parseInt(document.getElementById("regContribution").value, 10);
+
+      // Pre-fill fields in publish form
+      document.getElementById("dName").value = dName;
+      document.getElementById("dCar").value = `${carModel} (${plate})`;
+      document.getElementById("dSeatsCount").value = seats;
+      document.getElementById("dMur").value = mur;
+
+      closeDriverRegisterModal();
+      uberToast(`Vehicle ${plate} registered successfully! Now publish your route.`);
+      switchView("offerRide");
     }
 
     function saveData() {
@@ -1487,140 +2436,11 @@
       });
     }
 
-    /* GOOGLE MAPS INTEGRATION */
-    window.initGoogleMap = function() {
-      const mauritiusCenter = { lat: -20.2443, lng: 57.4939 };
-
-      // Hero Map instance
-      heroMap = new google.maps.Map(document.getElementById("heroInteractiveMap"), {
-        center: mauritiusCenter,
-        zoom: 12,
-        mapTypeControl: false,
-        streetViewControl: false,
-        styles: [
-          { featureType: "all", elementType: "geometry", stylers: [{ saturation: -20 }] },
-          { featureType: "road", elementType: "geometry", stylers: [{ lightness: 20 }] },
-          { featureType: "poi", stylers: [{ visibility: "off" }] }
-        ]
-      });
-
-      new google.maps.TrafficLayer().setMap(heroMap);
-      heroDirectionsService = new google.maps.DirectionsService();
-      heroDirectionsRenderer = new google.maps.DirectionsRenderer({
-        map: heroMap,
-        polylineOptions: { strokeColor: "#000000", strokeWeight: 5 }
-      });
-
-      // Main Route Map instance
-      mainMap = new google.maps.Map(document.getElementById("mainGoogleMap"), {
-        center: mauritiusCenter,
-        zoom: 12,
-        mapTypeControl: false
-      });
-      new google.maps.TrafficLayer().setMap(mainMap);
-      mainDirectionsService = new google.maps.DirectionsService();
-      mainDirectionsRenderer = new google.maps.DirectionsRenderer({
-        map: mainMap,
-        polylineOptions: { strokeColor: "#06C167", strokeWeight: 6 }
-      });
-
-      syncHeroRoute();
-      updateGoogleRoute();
-      renderIncidentPins();
-    };
-
-    function syncHeroRoute() {
-      if (!heroDirectionsService) return;
-      const p = document.getElementById("pPickup").value;
-      const d = document.getElementById("pDropoff").value;
-
-      const originAddr = CORRIDOR[p]?.addr || "Curepipe, Mauritius";
-      const destAddr = CORRIDOR[d]?.addr || "Victoria Urban Terminal, Port Louis, Mauritius";
-
-      heroDirectionsService.route({
-        origin: originAddr,
-        destination: destAddr,
-        travelMode: google.maps.TravelMode.DRIVING
-      }, (res, status) => {
-        if (status === "OK") {
-          heroDirectionsRenderer.setDirections(res);
-          const leg = res.routes[0].legs[0];
-          document.getElementById("overlayRouteTitle").innerText = `${p} → ${d}`;
-          document.getElementById("overlayRouteDuration").innerText = `${leg.duration.text} (${leg.distance.text}) via M1 Corridor`;
-        }
-      });
+    function openHazardModal() {
+      document.getElementById("hazardModal").classList.add("open");
     }
-
-    function updateGoogleRoute() {
-      if (!mainDirectionsService) return;
-      const origin = document.getElementById("routeSelectStart").value;
-      const dest = document.getElementById("routeSelectEnd").value;
-
-      mainDirectionsService.route({
-        origin: origin,
-        destination: dest,
-        travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true
-      }, (res, status) => {
-        const box = document.getElementById("routeDetailsBox");
-        if (status === "OK") {
-          mainDirectionsRenderer.setDirections(res);
-          const leg = res.routes[0].legs[0];
-          box.innerHTML = `
-            <div style="background: rgba(6, 193, 103, 0.1); border-left: 4px solid var(--electric-green); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 12px;">
-              <strong style="color: #038a45;">Recommended: M1 Motorway Direct</strong>
-              <div style="font-size: 1.2rem; font-weight: 800; margin: 4px 0;">${leg.duration.text} &bull; ${leg.distance.text}</div>
-              <p style="font-size: 0.8rem; color: var(--uber-gray-600);">Smooth flow until Montee S / Sorèze funnel.</p>
-            </div>
-            <div style="background: var(--uber-gray-50); padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem;">
-              <strong>Bypass: Old Moka Road (B1)</strong> &bull; +8 mins &bull; Recommended during peak morning bottlenecks.
-            </div>
-          `;
-        }
-      });
-    }
-
-    function renderIncidentPins() {
-      incidents.forEach(inc => {
-        new google.maps.Marker({
-          position: { lat: inc.lat, lng: inc.lng },
-          map: mainMap,
-          title: inc.type,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 8,
-            fillColor: "#E11900",
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: "#FFFFFF"
-          }
-        });
-      });
-    }
-
-    function renderIncidents() {
-      const c = document.getElementById("incidentsList");
-      c.innerHTML = "";
-      document.getElementById("incCount").innerText = incidents.length;
-      incidents.forEach(i => {
-        const row = document.createElement("div");
-        row.style = "background: var(--uber-gray-50); padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; font-size: 0.82rem;";
-        row.innerHTML = `<span><i class="fa-solid fa-triangle-exclamation" style="color: var(--danger-red); margin-right: 6px;"></i>${i.loc} (${i.type})</span><small style="color: var(--uber-gray-600);">${i.time}</small>`;
-        c.appendChild(row);
-      });
-    }
-
-    function openHazardModal() { document.getElementById("hazardModal").classList.add("open"); }
-    function closeHazardModal() { document.getElementById("hazardModal").classList.remove("open"); }
-
-    function submitHazardPin(e) {
-      e.preventDefault();
-      const loc = document.getElementById("hzLoc").value;
-      const type = document.getElementById("hzType").value;
-      incidents.unshift({ loc, type, time: "Just now", lat: -20.2100, lng: 57.4900 });
-      renderIncidents();
-      closeHazardModal();
-      uberToast("Incident broadcasted to SmartMove route map!");
+    function closeHazardModal() {
+      document.getElementById("hazardModal").classList.remove("open");
     }
 
     function calcFreight() {
@@ -1634,18 +2454,22 @@
       }
     }
 
-    function uberToast(msg) {
+    function uberToast(msg, type = "success") {
       const box = document.getElementById("toastBox");
       const t = document.createElement("div");
-      t.className = "uber-toast";
-      t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--electric-green);"></i><span>${msg}</span>`;
+      t.className = `uber-toast ${type === 'danger' ? 'danger' : (type === 'warning' ? 'warning' : '')}`;
+      let icon = '<i class="fa-solid fa-circle-check" style="color: var(--electric-green);"></i>';
+      if (type === 'danger') icon = '<i class="fa-solid fa-circle-exclamation" style="color: var(--danger-red);"></i>';
+      if (type === 'warning') icon = '<i class="fa-solid fa-triangle-exclamation" style="color: var(--warning-amber);"></i>';
+
+      t.innerHTML = `${icon}<span>${msg}</span>`;
       box.appendChild(t);
-      setTimeout(() => t.remove(), 3600);
+      setTimeout(() => t.remove(), 4000);
     }
   </script>
 
-  <!-- Google Maps API with your Key -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initGoogleMap&libraries=places" async defer></script>
+  <!-- Google Maps JavaScript API with places AND geometry libraries -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCBCS8maYLaxTWXzu_tIdjIMuEqkNDerLM&callback=initGoogleMap&libraries=places,geometry" async defer></script>
 
 </body>
 </html>
