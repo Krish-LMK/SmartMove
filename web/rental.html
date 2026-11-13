@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartMove Rentals | Car Hire in Mauritius</title>
+  <meta name="description" content="Rent a car across Mauritius: airport, Port Louis, Curepipe, Grand Baie and more. Transparent daily prices, free cancellation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #000;
+      --ink: #121212;
+      --card: #ffffff;
+      --bg: #ffffff;
+      --bg-soft: #F6F6F6;
+      --line: #E2E2E2;
+      --muted: #545454;
+      --muted-2: #8a8a8a;
+      --text: #000;
+      --green: #06C167;
+      --green-dark: #05a357;
+      --green-soft: rgba(6, 193, 103, 0.12);
+      --amber: #FF8800;
+      --red: #E11900;
+      --radius: 14px;
+      --radius-pill: 999px;
+      --shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 20px 50px rgba(0, 0, 0, 0.16);
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --card: #1A1A1A; --bg: #0d0d0d; --bg-soft: #151515; --line: #2C2C2C;
+        --muted: #b5b5b5; --muted-2: #8a8a8a; --text: #fff;
+        --shadow: 0 14px 40px rgba(0,0,0,0.5); --shadow-hover: 0 20px 50px rgba(0,0,0,0.7);
+      }
+    }
+    :root[data-theme="dark"] {
+      --card: #1A1A1A; --bg: #0d0d0d; --bg-soft: #151515; --line: #2C2C2C;
+      --muted: #b5b5b5; --muted-2: #8a8a8a; --text: #fff;
+      --shadow: 0 14px 40px rgba(0,0,0,0.5); --shadow-hover: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text);
+      -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; color: inherit; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    h1, h2, h3, .num { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 50; background: var(--black); color: #fff;
+      border-bottom: 1px solid #1f1f1f;
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+    .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.35rem; letter-spacing: 0.02em; }
+    .logo span { color: var(--green); }
+    .logo small { font-family: 'Plus Jakarta Sans'; font-weight: 600; font-size: 0.72rem; color: #a6a6a6; margin-left: 8px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 6px; list-style: none; }
+    .nav-links a { padding: 8px 14px; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 500; color: #d0d0d0; transition: background .2s var(--ease), color .2s; }
+    .nav-links a:hover { background: #1e1e1e; color: #fff; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .theme-btn { background: #1e1e1e; border: 1px solid #333; color: #fff; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: none; cursor: pointer; border-radius: var(--radius-pill); font-weight: 700;
+      padding: 12px 22px; font-size: 0.95rem; transition: transform .15s var(--ease), background .2s, box-shadow .2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-green { background: var(--green); color: #000; }
+    .btn-green:hover { background: var(--green-dark); box-shadow: 0 8px 24px rgba(6,193,103,.3); }
+    .btn-dark { background: var(--text); color: var(--bg); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--line); color: var(--text); }
+    .btn-outline:hover { border-color: var(--text); }
+    .btn-sm { padding: 9px 16px; font-size: 0.85rem; }
+    .menu-btn { display: none; background: none; border: none; color: #fff; cursor: pointer; padding: 6px; }
+
+    /* Hero */
+    .hero { background: var(--black); color: #fff; padding: 56px 0 120px; position: relative; overflow: hidden; }
+    .hero::after {
+      content: ""; position: absolute; right: -160px; top: -120px; width: 560px; height: 560px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,193,103,.28), transparent 65%); pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; position: relative; z-index: 1; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; background: #1e1e1e; border: 1px solid #333; color: var(--green); padding: 5px 12px; border-radius: var(--radius-pill); font-size: 0.78rem; font-weight: 600; margin-bottom: 18px; }
+    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05; font-weight: 700; margin-bottom: 18px; }
+    .hero h1 em { font-style: normal; color: var(--green); }
+    .hero p.lead { color: #b5b5b5; font-size: 1.08rem; max-width: 520px; margin-bottom: 28px; }
+    .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .hero-stats div strong { display: block; font-family: 'Space Grotesk'; font-size: 1.6rem; color: #fff; }
+    .hero-stats div span { font-size: 0.82rem; color: #8a8a8a; }
+    .hero-car { width: 100%; max-width: 520px; justify-self: end; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+
+    /* Search card */
+    .search-card {
+      background: var(--card); color: var(--text); border-radius: 20px; box-shadow: var(--shadow-hover);
+      padding: 22px; margin-top: -84px; position: relative; z-index: 5; border: 1px solid var(--line);
+    }
+    .search-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .chip {
+      border: 1.5px solid var(--line); background: var(--card); padding: 7px 14px; border-radius: var(--radius-pill);
+      font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all .2s var(--ease);
+    }
+    .chip:hover { border-color: var(--text); }
+    .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .search-grid { display: grid; grid-template-columns: 1.1fr 1.1fr 1.35fr 1.35fr auto; gap: 12px; align-items: end; }
+    .field label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .field input, .field select {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.5px solid var(--line);
+      background: var(--bg-soft); outline: none; transition: border-color .2s; font-size: 0.95rem; min-height: 48px;
+    }
+    .field input:focus, .field select:focus { border-color: var(--green); }
+    .field-row { display: grid; grid-template-columns: 1fr 92px; gap: 6px; }
+    .field-row input { padding-right: 8px; }
+    .search-note { margin-top: 12px; font-size: 0.82rem; color: var(--muted); display: flex; gap: 18px; flex-wrap: wrap; }
+    .search-note b { color: var(--text); }
+    .check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: var(--muted); }
+    .check input { accent-color: var(--green); width: 16px; height: 16px; }
+
+    /* Sections */
+    section { padding: 80px 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 32px; flex-wrap: wrap; }
+    .section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); line-height: 1.1; }
+    .section-head p { color: var(--muted); max-width: 520px; margin-top: 8px; }
+
+    /* Fleet */
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filters select { padding: 8px 12px; border-radius: var(--radius-pill); border: 1.5px solid var(--line); background: var(--card); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .fleet { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; }
+    .car {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column; transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .car:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .car-img { background: var(--bg-soft); height: 160px; display: grid; place-items: center; position: relative; }
+    .car-img svg { width: 82%; height: auto; }
+    .badge { position: absolute; top: 12px; left: 12px; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-pill); background: var(--black); color: #fff; text-transform: uppercase; letter-spacing: .04em; }
+    .badge.eco { background: var(--green); color: #000; }
+    .car-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .car-title { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+    .car-title h3 { font-size: 1.15rem; }
+    .car-title small { color: var(--muted); font-size: 0.8rem; display: block; }
+    .rating { font-size: 0.8rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .rating svg { color: var(--amber); }
+    .specs { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
+    .specs span { display: inline-flex; align-items: center; gap: 5px; }
+    .car-foot { display: flex; justify-content: space-between; align-items: end; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); }
+    .price .num { font-size: 1.45rem; font-weight: 700; }
+    .price small { color: var(--muted); font-size: 0.78rem; display: block; }
+    .empty { grid-column: 1 / -1; text-align: center; padding: 48px; color: var(--muted); border: 1.5px dashed var(--line); border-radius: 18px; }
+
+    /* Steps */
+    .soft { background: var(--bg-soft); }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+    .step { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+    .step::before {
+      counter-increment: step; content: counter(step); display: grid; place-items: center;
+      width: 38px; height: 38px; border-radius: 50%; background: var(--green-soft); color: var(--green);
+      font-family: 'Space Grotesk'; font-weight: 700; margin-bottom: 16px;
+    }
+    .step h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .step p { color: var(--muted); font-size: 0.9rem; }
+
+    /* Locations */
+    .locations { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .loc { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card); display: flex; gap: 14px; align-items: start; }
+    .loc-icon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: var(--black); color: var(--green); display: grid; place-items: center; }
+    .loc h3 { font-size: 1rem; }
+    .loc p { color: var(--muted); font-size: 0.85rem; }
+    .loc .hours { font-size: 0.78rem; color: var(--green); font-weight: 700; margin-top: 4px; }
+
+    /* Perks */
+    .perks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .perk { padding: 4px 0; }
+    .perk h3 { font-size: 1.05rem; margin: 12px 0 6px; }
+    .perk p { color: var(--muted); font-size: 0.9rem; }
+    .perk-icon { width: 46px; height: 46px; border-radius: 12px; background: var(--green-soft); color: var(--green); display: grid; place-items: center; }
+
+    /* FAQ */
+    .faq { max-width: 820px; }
+    details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+    summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font-size: 1.4rem; line-height: 1; color: var(--green); transition: transform .2s; }
+    details[open] summary::after { transform: rotate(45deg); }
+    details p { color: var(--muted); margin-top: 10px; font-size: 0.95rem; }
+
+    /* CTA */
+    .cta { background: var(--black); color: #fff; border-radius: 24px; padding: 48px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .cta h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); }
+    .cta p { color: #b5b5b5; margin-top: 6px; }
+
+    footer { padding: 48px 0 32px; border-top: 1px solid var(--line); margin-top: 80px; }
+    .foot { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; color: var(--muted); font-size: 0.88rem; }
+    .foot .logo { color: var(--text); }
+    .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .foot-links a:hover { color: var(--text); }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .overlay.open { display: flex; animation: fade .2s var(--ease); }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: var(--card); color: var(--text); border-radius: 20px; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-hover); animation: up .25s var(--ease); }
+    @keyframes up { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--card); }
+    .modal-head h3 { font-size: 1.2rem; }
+    .close { background: var(--bg-soft); border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; }
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+    .summary-car { display: flex; gap: 16px; align-items: center; background: var(--bg-soft); border-radius: 14px; padding: 14px; }
+    .summary-car svg { width: 110px; flex-shrink: 0; }
+    .summary-car small { color: var(--muted); display: block; font-size: 0.8rem; }
+    .trip { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.88rem; }
+    .trip div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+    .trip small { display: block; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
+    .extras { display: flex; flex-direction: column; gap: 8px; }
+    .extra { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; transition: border-color .2s; }
+    .extra:has(input:checked) { border-color: var(--green); background: var(--green-soft); }
+    .extra .check { color: var(--text); font-weight: 600; }
+    .extra span.p { font-size: 0.85rem; color: var(--muted); }
+    .breakdown { border-top: 1px dashed var(--line); padding-top: 14px; font-size: 0.9rem; display: flex; flex-direction: column; gap: 6px; }
+    .breakdown .row { display: flex; justify-content: space-between; color: var(--muted); }
+    .breakdown .total { color: var(--text); font-weight: 800; font-size: 1.15rem; padding-top: 8px; border-top: 1px solid var(--line); margin-top: 4px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .error { color: var(--red); font-size: 0.82rem; font-weight: 600; min-height: 1em; }
+    .success { text-align: center; padding: 36px 24px; }
+    .success .tick { width: 72px; height: 72px; border-radius: 50%; background: var(--green); color: #000; display: grid; place-items: center; margin: 0 auto 18px; }
+    .success .ref { font-family: 'Space Grotesk'; font-weight: 700; font-size: 1.3rem; background: var(--bg-soft); display: inline-block; padding: 8px 16px; border-radius: 10px; margin: 14px 0; letter-spacing: .08em; }
+    .success p { color: var(--muted); }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 120px); background: var(--black); color: #fff; padding: 12px 20px; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 600; z-index: 200; transition: transform .3s var(--ease); border: 1px solid #333; max-width: calc(100% - 32px); }
+    .toast.show { transform: translate(-50%, 0); }
+
+    /* Responsive */
+    @media (max-width: 1000px) {
+      .search-grid { grid-template-columns: 1fr 1fr; }
+      .search-grid .btn { grid-column: 1 / -1; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .locations, .perks { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 760px) {
+      .wrap { padding: 0 16px; }
+      .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--black); flex-direction: column; padding: 8px 16px 16px; border-bottom: 1px solid #1f1f1f; }
+      .nav-links.open { display: flex; }
+      .menu-btn { display: block; }
+      .nav-right .btn { display: none; }
+      .logo small { display: none; }
+      .hero { padding: 36px 0 110px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-car { display: none; }
+      .search-grid, .steps, .locations, .perks, .trip, .form-grid { grid-template-columns: 1fr; }
+      section { padding: 56px 0; }
+      .cta { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <a href="#top" class="logo">SMART<span>MOVE</span><small>Rentals</small></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#fleet">Fleet</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#locations">Locations</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </button>
+        <a href="#search" class="btn btn-green btn-sm">Book a car</a>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">● Island-wide pick-up &amp; drop-off</span>
+          <h1>Your car for every road in <em>Mauritius</em>.</h1>
+          <p class="lead">From the airport to Le Morne, pick a car in under two minutes. One clear daily price, unlimited mileage, free cancellation up to 24 hours before pick-up.</p>
+          <div class="hero-stats">
+            <div><strong>12</strong><span>models in the fleet</span></div>
+            <div><strong>6</strong><span>pick-up points</span></div>
+            <div><strong>24/7</strong><span>roadside help</span></div>
+          </div>
+        </div>
+        <svg class="hero-car" viewBox="0 0 520 220" aria-hidden="true">
+          <ellipse cx="260" cy="196" rx="220" ry="14" fill="#000" opacity=".5"/>
+          <path d="M40 150 C40 128 54 118 82 114 L150 106 C178 76 214 58 268 56 L330 56 C372 58 404 78 432 106 L468 112 C490 116 500 128 500 146 L500 160 C500 168 494 172 486 172 L54 172 C46 172 40 168 40 160 Z" fill="#06C167"/>
+          <path d="M168 106 C192 82 222 70 266 69 L300 69 L300 106 Z" fill="#0d0d0d"/>
+          <path d="M314 69 L330 69 C364 70 390 84 412 106 L314 106 Z" fill="#0d0d0d"/>
+          <rect x="300" y="69" width="14" height="37" fill="#06C167"/>
+          <path d="M60 140 L92 136" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+          <path d="M470 128 L492 132" stroke="#FF8800" stroke-width="6" stroke-linecap="round"/>
+          <path d="M150 130 L470 130" stroke="#000" stroke-opacity=".18" stroke-width="2"/>
+          <circle cx="140" cy="172" r="32" fill="#111"/><circle cx="140" cy="172" r="14" fill="#555"/>
+          <circle cx="400" cy="172" r="32" fill="#111"/><circle cx="400" cy="172" r="14" fill="#555"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="wrap" id="search">
+      <form class="search-card" id="searchForm">
+        <div class="search-tabs" id="catTabs">
+          <button type="button" class="chip active" data-cat="all">All cars</button>
+          <button type="button" class="chip" data-cat="economy">Economy</button>
+          <button type="button" class="chip" data-cat="suv">SUV</button>
+          <button type="button" class="chip" data-cat="electric">Electric</button>
+          <button type="button" class="chip" data-cat="van">Family van</button>
+          <button type="button" class="chip" data-cat="premium">Premium</button>
+        </div>
+        <div class="search-grid">
+          <div class="field">
+            <label for="pickupLoc">Pick-up location</label>
+            <select id="pickupLoc"></select>
+          </div>
+          <div class="field" id="dropField">
+            <label for="dropLoc">Drop-off location</label>
+            <select id="dropLoc"></select>
+          </div>
+          <div class="field">
+            <label for="pickDate">Pick-up</label>
+            <div class="field-row">
+              <input type="date" id="pickDate" required>
+              <select id="pickTime" aria-label="Pick-up time"></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="retDate">Return</label>
+            <div class="field-row">
+              <input type="date" id="retDate" required>
+              <select id="retTime" aria-label="Return time"></select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-green" style="min-height:48px">Show cars</button>
+        </div>
+        <div class="search-note">
+          <label class="check"><input type="checkbox" id="sameLoc" checked> Return to same location</label>
+          <span id="durationNote">Rental length: <b>3 days</b></span>
+        </div>
+      </form>
+    </div>
+
+    <!-- Fleet -->
+    <section id="fleet">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Choose your car</h2>
+            <p id="fleetSub">Prices include insurance with excess, VAT and unlimited kilometres.</p>
+          </div>
+          <div class="filters">
+            <select id="transFilter" aria-label="Transmission">
+              <option value="all">Any gearbox</option>
+              <option value="Automatic">Automatic</option>
+              <option value="Manual">Manual</option>
+            </select>
+            <select id="seatFilter" aria-label="Seats">
+              <option value="0">Any seats</option>
+              <option value="5">5+ seats</option>
+              <option value="7">7+ seats</option>
+            </select>
+            <select id="sortBy" aria-label="Sort">
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="rating">Top rated</option>
+            </select>
+          </div>
+        </div>
+        <div class="fleet" id="fleetGrid"></div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="soft">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>How it works</h2>
+            <p>No counter queues and no surprise fees at the desk.</p>
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step"><h3>Pick dates &amp; place</h3><p>Choose where and when you want the car. Airport, hotel or city office.</p></div>
+          <div class="step"><h3>Choose a car</h3><p>Compare the full price for your trip, not just a daily teaser rate.</p></div>
+          <div class="step"><h3>Add extras</h3><p>Child seat, GPS, extra driver or full cover. Add them now or at pick-up.</p></div>
+          <div class="step"><h3>Drive away</h3><p>Show your licence and ID, sign, and the keys are yours. About 10 minutes.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Locations -->
+    <section id="locations">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Pick-up points</h2>
+            <p>Collect at any office and return to another one. A one-way fee applies between regions.</p>
+          </div>
+        </div>
+        <div class="locations" id="locGrid"></div>
+      </div>
+    </section>
+
+    <!-- Perks -->
+    <section class="soft">
+      <div class="wrap">
+        <div class="perks">
+          <div class="perk">
+            <div class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <h3>Insurance included</h3>
+            <p>Every rental comes with collision cover and third-party liability. Reduce the excess to zero with Full Cover.</p>
+          </div>
+          <div class="perk">
+            <div class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <h3>Free cancellation</h3>
+            <p>Change or cancel for free up to 24 hours before pick-up. Plans change, and that is fine.</p>
+          </div>
+          <div class="perk">
+            <div class="perk-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+            <h3>Electric ready</h3>
+            <p>Our EVs come charged to 90% with a charging card for public stations across the island.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="wrap">
+        <div class="section-head"><div><h2>Questions</h2></div></div>
+        <div class="faq">
+          <details open><summary>What do I need to rent a car?</summary><p>A driving licence held for at least one year, a passport or national ID, and a credit or debit card in the main driver's name for the deposit. International visitors can drive with a licence in English or French; otherwise bring an International Driving Permit.</p></details>
+          <details><summary>How old do I need to be?</summary><p>The minimum age is 21. Drivers under 25 pay a young driver fee of Rs 300 per day. Premium cars require age 25 or over.</p></details>
+          <details><summary>Is there a deposit?</summary><p>Yes. We hold Rs 15,000 on your card at pick-up (Rs 30,000 for Premium). It is released when the car is returned in the same condition. With Full Cover the deposit drops to Rs 5,000.</p></details>
+          <details><summary>Which side of the road do people drive on?</summary><p>Mauritius drives on the left. Speed limits are 110 km/h on the motorway, 80 km/h on main roads and 40–60 km/h in towns.</p></details>
+          <details><summary>Can you deliver the car to my hotel?</summary><p>Yes, choose "Hotel delivery" as the pick-up location. Delivery is free for rentals of 5 days or more, and Rs 800 for shorter rentals.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="cta">
+        <div>
+          <h2>Ready when you land.</h2>
+          <p>Book now and your car will be waiting at SSR International Airport.</p>
+        </div>
+        <a href="#search" class="btn btn-green">Find a car</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>
+        <div class="logo">SMART<span>MOVE</span></div>
+        <p style="margin-top:8px">Car rental across Mauritius · +230 5 000 0000 · hello@smartmove.example</p>
+      </div>
+      <div class="foot-links">
+        <a href="#fleet">Fleet</a><a href="#locations">Locations</a><a href="#faq">FAQ</a><a href="index.html">SmartMove app</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Booking modal -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CARS = [
+      { id: 1, name: 'Kestrel Mini',   type: 'Hatchback',      cat: 'economy',  price: 1200, seats: 4, bags: 1, trans: 'Manual',    fuel: 'Petrol',   rating: 4.6, color: '#06C167', shape: 'hatch', tag: 'Best value' },
+      { id: 2, name: 'Kestrel Mini',   type: 'Hatchback',      cat: 'economy',  price: 1400, seats: 4, bags: 1, trans: 'Automatic', fuel: 'Petrol',   rating: 4.7, color: '#276EF1', shape: 'hatch' },
+      { id: 3, name: 'Lagoon Compact', type: 'Compact sedan',  cat: 'economy',  price: 1650, seats: 5, bags: 2, trans: 'Automatic', fuel: 'Petrol',   rating: 4.8, color: '#E11900', shape: 'sedan', tag: 'Popular' },
+      { id: 4, name: 'Volt City',      type: 'Electric hatch', cat: 'electric', price: 2100, seats: 5, bags: 2, trans: 'Automatic', fuel: 'Electric', rating: 4.9, color: '#00B4D8', shape: 'hatch', tag: 'Electric' },
+      { id: 5, name: 'Volt Aero',      type: 'Electric sedan', cat: 'electric', price: 3400, seats: 5, bags: 3, trans: 'Automatic', fuel: 'Electric', rating: 4.9, color: '#e8e8e8', shape: 'sedan', tag: 'Electric' },
+      { id: 6, name: 'Ridge Trail',    type: 'Compact SUV',    cat: 'suv',      price: 2300, seats: 5, bags: 3, trans: 'Automatic', fuel: 'Petrol',   rating: 4.7, color: '#FF8800', shape: 'suv' },
+      { id: 7, name: 'Ridge Summit',   type: '4x4 SUV',        cat: 'suv',      price: 3100, seats: 5, bags: 4, trans: 'Manual',    fuel: 'Diesel',   rating: 4.6, color: '#545454', shape: 'suv' },
+      { id: 8, name: 'Ridge Grand',    type: '7-seat SUV',     cat: 'suv',      price: 3600, seats: 7, bags: 3, trans: 'Automatic', fuel: 'Hybrid',   rating: 4.8, color: '#1f3a5f', shape: 'suv', tag: 'Hybrid' },
+      { id: 9, name: 'Harbour Van',    type: 'Minivan',        cat: 'van',      price: 2900, seats: 7, bags: 4, trans: 'Automatic', fuel: 'Petrol',   rating: 4.7, color: '#9C27B0', shape: 'van' },
+      { id:10, name: 'Harbour Max',    type: 'Passenger van',  cat: 'van',      price: 3900, seats: 9, bags: 6, trans: 'Manual',    fuel: 'Diesel',   rating: 4.5, color: '#f2f2f2', shape: 'van' },
+      { id:11, name: 'Corsa Noir',     type: 'Executive sedan',cat: 'premium',  price: 4800, seats: 5, bags: 3, trans: 'Automatic', fuel: 'Hybrid',   rating: 4.9, color: '#151515', shape: 'sedan', tag: 'Premium' },
+      { id:12, name: 'Riviera Open',   type: 'Convertible',    cat: 'premium',  price: 5600, seats: 4, bags: 1, trans: 'Automatic', fuel: 'Petrol',   rating: 4.8, color: '#E11900', shape: 'coupe', tag: 'Premium' },
+    ];
+
+    const LOCS = [
+      { id: 'ssr',  name: 'SSR International Airport', area: 'Plaine Magnien · Arrivals hall', hours: 'Open 24/7', region: 'south' },
+      { id: 'pl',   name: 'Port Louis',                area: 'Caudan Waterfront',              hours: '08:00 – 19:00', region: 'north' },
+      { id: 'cpe',  name: 'Curepipe',                  area: 'Royal Road, near Metro station', hours: '08:00 – 18:00', region: 'centre' },
+      { id: 'ebe',  name: 'Ébène',                     area: 'Cybercity, Metro Express stop',  hours: '07:30 – 19:00', region: 'centre' },
+      { id: 'gb',   name: 'Grand Baie',                area: 'Coastal Road, La Croisette',     hours: '08:00 – 20:00', region: 'north' },
+      { id: 'flq',  name: 'Flic en Flac',              area: 'Royal Road, opposite the beach', hours: '08:00 – 18:00', region: 'west' },
+      { id: 'hotel',name: 'Hotel delivery',            area: 'Anywhere on the island',         hours: 'By appointment', region: 'any', hidden: true },
+    ];
+
+    const EXTRAS = [
+      { id: 'cover',  name: 'Full Cover (zero excess)', perDay: 450 },
+      { id: 'driver', name: 'Additional driver',        perDay: 200 },
+      { id: 'child',  name: 'Child seat',               perDay: 150 },
+      { id: 'gps',    name: 'GPS navigator',            perDay: 120 },
+      { id: 'wifi',   name: 'Pocket Wi-Fi (4G)',        perDay: 180 },
+    ];
+    const ONE_WAY_FEE = 900;
+    const DELIVERY_FEE = 800;
+
+    const $ = (s) => document.querySelector(s);
+    const fmt = (n) => 'Rs ' + n.toLocaleString('en-US');
+    const state = { cat: 'all', trans: 'all', seats: 0, sort: 'price-asc' };
+
+    // ---------- Theme ----------
+    const root = document.documentElement;
+    try { const t = localStorage.getItem('sm-theme'); if (t) root.dataset.theme = t; } catch (e) {}
+    $('#themeBtn').addEventListener('click', () => {
+      const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      root.dataset.theme = dark ? 'light' : 'dark';
+      try { localStorage.setItem('sm-theme', root.dataset.theme); } catch (e) {}
+    });
+    $('#menuBtn').addEventListener('click', () => $('#navLinks').classList.toggle('open'));
+    document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => $('#navLinks').classList.remove('open')));
+
+    // ---------- Car illustrations ----------
+    function carSVG(c) {
+      const body = {
+        hatch: 'M30 92 C30 78 40 72 56 70 L84 66 C100 46 120 38 150 38 L178 38 C200 40 212 52 220 70 L232 74 C244 76 250 84 250 94 L250 104 L30 104 Z',
+        sedan: 'M20 92 C20 80 30 74 48 72 L84 68 C104 48 126 40 156 40 L180 40 C204 42 222 54 236 68 L254 72 C266 74 270 82 270 92 L270 104 L20 104 Z',
+        suv:   'M24 90 C24 76 32 70 46 68 L70 64 L86 36 C90 30 96 28 104 28 L200 28 C212 28 220 34 226 44 L240 66 L254 70 C264 72 268 80 268 90 L268 104 L24 104 Z',
+        van:   'M22 92 C22 78 30 70 44 66 L70 36 C76 28 84 24 96 24 L250 24 C260 24 266 30 266 40 L266 104 L22 104 Z',
+        coupe: 'M18 92 C18 82 28 76 46 74 L96 68 C116 54 134 50 156 50 L176 50 C196 52 212 60 228 70 L256 74 C268 76 272 84 272 94 L272 104 L18 104 Z',
+      }[c.shape];
+      const glass = {
+        hatch: 'M94 68 C108 52 124 46 148 46 L148 68 Z M156 46 L176 46 C194 48 204 58 210 68 L156 68 Z',
+        sedan: 'M94 70 C110 54 128 48 154 48 L154 70 Z M162 48 L180 48 C200 50 214 60 224 70 L162 70 Z',
+        suv:   'M92 64 L102 38 L150 38 L150 64 Z M158 38 L198 38 C206 38 212 42 216 50 L224 64 L158 64 Z',
+        van:   'M78 62 L96 34 L140 34 L140 62 Z M148 34 L196 34 L196 62 L148 62 Z M204 34 L254 34 L254 62 L204 62 Z',
+        coupe: 'M108 68 C122 58 136 56 156 56 L176 56 C192 58 204 62 214 68 Z',
+      }[c.shape];
+      const w1 = c.shape === 'van' ? 72 : 72, w2 = c.shape === 'van' ? 220 : 216;
+      return `<svg viewBox="0 0 290 130" aria-hidden="true">
+        <ellipse cx="145" cy="120" rx="125" ry="6" fill="#000" opacity=".12"/>
+        <path d="${body}" fill="${c.color}" stroke="#000" stroke-opacity=".15"/>
+        <path d="${glass}" fill="#1b1b1b" opacity=".88"/>
+        <circle cx="${w1}" cy="104" r="17" fill="#111"/><circle cx="${w1}" cy="104" r="7" fill="#777"/>
+        <circle cx="${w2}" cy="104" r="17" fill="#111"/><circle cx="${w2}" cy="104" r="7" fill="#777"/>
+        <rect x="${c.shape==='van'?256:244}" y="80" width="12" height="5" rx="2" fill="#FF8800"/>
+      </svg>`;
+    }
+
+    // ---------- Form setup ----------
+    const iso = (d) => d.toISOString().slice(0, 10);
+    const today = new Date(); today.setHours(12, 0, 0, 0);
+    const plus = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+
+    function fillLocs(sel) {
+      sel.innerHTML = LOCS.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+    }
+    fillLocs($('#pickupLoc')); fillLocs($('#dropLoc'));
+    const times = [];
+    for (let h = 7; h <= 21; h++) for (const m of ['00', '30']) times.push(`${String(h).padStart(2, '0')}:${m}`);
+    ['#pickTime', '#retTime'].forEach(s => $(s).innerHTML = times.map(t => `<option ${t === '10:00' ? 'selected' : ''}>${t}</option>`).join(''));
+    $('#pickDate').value = iso(plus(today, 1)); $('#pickDate').min = iso(today);
+    $('#retDate').value = iso(plus(today, 4)); $('#retDate').min = iso(plus(today, 1));
+
+    const dropField = $('#dropField');
+    function syncSame() {
+      const same = $('#sameLoc').checked;
+      dropField.style.opacity = same ? .5 : 1;
+      $('#dropLoc').disabled = same;
+      if (same) $('#dropLoc').value = $('#pickupLoc').value;
+    }
+    $('#sameLoc').addEventListener('change', syncSame);
+    $('#pickupLoc').addEventListener('change', syncSame);
+    syncSame();
+
+    function getDays() {
+      const a = new Date(`${$('#pickDate').value}T${$('#pickTime').value}`);
+      const b = new Date(`${$('#retDate').value}T${$('#retTime').value}`);
+      const hrs = (b - a) / 36e5;
+      if (!(hrs > 0)) return 0;
+      // 24h blocks, with a 59-minute grace period
+      return Math.max(1, Math.ceil((hrs - 59 / 60) / 24));
+    }
+    function updateDuration() {
+      const d = getDays();
+      $('#durationNote').innerHTML = d ? `Rental length: <b>${d} day${d > 1 ? 's' : ''}</b>${d >= 7 ? ' · <b style="color:var(--green)">10% weekly discount</b>' : ''}`
+        : `<b style="color:var(--red)">Return must be after pick-up</b>`;
+      renderFleet();
+    }
+    ['#pickDate', '#retDate', '#pickTime', '#retTime'].forEach(s => $(s).addEventListener('change', () => {
+      if (s === '#pickDate') { $('#retDate').min = $('#pickDate').value; if ($('#retDate').value <= $('#pickDate').value) $('#retDate').value = iso(plus(new Date($('#pickDate').value), 1)); }
+      updateDuration();
+    }));
+
+    $('#searchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!getDays()) { toast('Please pick a return time after the pick-up time.'); return; }
+      $('#fleet').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ---------- Filters ----------
+    document.querySelectorAll('#catTabs .chip').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('#catTabs .chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active'); state.cat = btn.dataset.cat; renderFleet();
+    }));
+    $('#transFilter').addEventListener('change', e => { state.trans = e.target.value; renderFleet(); });
+    $('#seatFilter').addEventListener('change', e => { state.seats = +e.target.value; renderFleet(); });
+    $('#sortBy').addEventListener('change', e => { state.sort = e.target.value; renderFleet(); });
+
+    const discount = (days) => days >= 7 ? 0.10 : 0;
+    const basePrice = (car, days) => Math.round(car.price * days * (1 - discount(days)));
+
+    function renderFleet() {
+      const days = getDays() || 1;
+      let list = CARS.filter(c =>
+        (state.cat === 'all' || c.cat === state.cat) &&
+        (state.trans === 'all' || c.trans === state.trans) &&
+        c.seats >= state.seats);
+      list.sort((a, b) => state.sort === 'price-asc' ? a.price - b.price : state.sort === 'price-desc' ? b.price - a.price : b.rating - a.rating);
+      $('#fleetSub').textContent = `${list.length} car${list.length === 1 ? '' : 's'} available · prices for ${days} day${days > 1 ? 's' : ''}, including insurance, VAT and unlimited km.`;
+      $('#fleetGrid').innerHTML = list.length ? list.map(c => `
+        <article class="car">
+          <div class="car-img">${c.tag ? `<span class="badge ${['Electric','Hybrid'].includes(c.tag) ? 'eco' : ''}">${c.tag}</span>` : ''}${carSVG(c)}</div>
+          <div class="car-body">
+            <div class="car-title">
+              <div><h3>${c.name}</h3><small>${c.type} · or similar</small></div>
+              <span class="rating"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7 7 .6-5.3 4.7 1.6 7.2L12 17.8 5.7 21.5l1.6-7.2L2 9.6 9 9z"/></svg>${c.rating}</span>
+            </div>
+            <div class="specs">
+              <span>${icon('seat')}${c.seats} seats</span>
+              <span>${icon('bag')}${c.bags} bags</span>
+              <span>${icon('gear')}${c.trans}</span>
+              <span>${icon(c.fuel === 'Electric' ? 'bolt' : 'fuel')}${c.fuel}</span>
+            </div>
+            <div class="car-foot">
+              <div class="price"><span class="num">${fmt(c.price)}</span><small>per day · ${fmt(basePrice(c, days))} total</small></div>
+              <button class="btn btn-dark btn-sm" data-book="${c.id}">Book</button>
+            </div>
+          </div>
+        </article>`).join('')
+        : `<div class="empty">No cars match those filters. Try another gearbox or seat count.</div>`;
+    }
+    $('#fleetGrid').addEventListener('click', e => {
+      const b = e.target.closest('[data-book]');
+      if (b) openBooking(+b.dataset.book);
+    });
+
+    function icon(n) {
+      const p = {
+        seat: '<path d="M6 20v-6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6M8 12V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v7"/>',
+        bag:  '<rect x="4" y="7" width="16" height="13" rx="2"/><path d="M9 7V4h6v3"/>',
+        gear: '<circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><path d="M6 8v8M18 8v4H6"/>',
+        fuel: '<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3 21h12M14 10h2a2 2 0 0 1 2 2v4a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
+        bolt: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+      }[n];
+      return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+    }
+
+    // ---------- Locations ----------
+    $('#locGrid').innerHTML = LOCS.map(l => `
+      <div class="loc">
+        <div class="loc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <div><h3>${l.name}</h3><p>${l.area}</p><div class="hours">${l.hours}</div></div>
+      </div>`).join('');
+
+    // ---------- Booking ----------
+    let current = null;
+    const overlay = $('#overlay'), modal = $('#modal');
+    const locName = id => LOCS.find(l => l.id === id).name;
+    const prettyDate = (d, t) => new Date(`${d}T${t}`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) + ', ' + t;
+
+    function openBooking(id) {
+      const days = getDays();
+      if (!days) { toast('Set a return time after pick-up first.'); $('#search').scrollIntoView({ behavior: 'smooth' }); return; }
+      current = { car: CARS.find(c => c.id === id), extras: new Set() };
+      const c = current.car;
+      modal.innerHTML = `
+        <div class="modal-head"><h3 id="modalTitle">Complete your booking</h3><button class="close" data-close aria-label="Close">×</button></div>
+        <div class="modal-body">
+          <div class="summary-car">${carSVG(c)}<div><strong>${c.name}</strong><small>${c.type} · ${c.seats} seats · ${c.trans} · ${c.fuel}</small></div></div>
+          <div class="trip">
+            <div><small>Pick-up</small>${locName($('#pickupLoc').value)}<br>${prettyDate($('#pickDate').value, $('#pickTime').value)}</div>
+            <div><small>Return</small>${locName($('#dropLoc').value)}<br>${prettyDate($('#retDate').value, $('#retTime').value)}</div>
+          </div>
+          <div>
+            <div class="field"><label>Extras</label></div>
+            <div class="extras">${EXTRAS.map(x => `
+              <label class="extra"><span class="check"><input type="checkbox" value="${x.id}"> ${x.name}</span><span class="p">${fmt(x.perDay)}/day</span></label>`).join('')}
+            </div>
+          </div>
+          <form id="bookForm" class="form-grid" novalidate>
+            <div class="field full"><label for="fName">Full name</label><input id="fName" autocomplete="name" placeholder="As on your driving licence"></div>
+            <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="fPhone">Phone</label><input id="fPhone" type="tel" autocomplete="tel" placeholder="+230 …"></div>
+            <div class="field full"><label class="check"><input type="checkbox" id="fAge"> Main driver is 25 or older</label></div>
+          </form>
+          <div class="breakdown" id="breakdown"></div>
+          <div class="error" id="formError"></div>
+          <button class="btn btn-green" id="confirmBtn" style="width:100%">Confirm booking</button>
+          <p style="font-size:.78rem;color:var(--muted);text-align:center">Pay at pick-up. Free cancellation until 24 h before.</p>
+        </div>`;
+      modal.querySelectorAll('.extras input').forEach(i => i.addEventListener('change', () => {
+        i.checked ? current.extras.add(i.value) : current.extras.delete(i.value); renderBreakdown();
+      }));
+      $('#fAge').addEventListener('change', renderBreakdown);
+      $('#confirmBtn').addEventListener('click', confirmBooking);
+      renderBreakdown();
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => $('#fName').focus(), 50);
+    }
+
+    function quote() {
+      const days = getDays(), c = current.car;
+      const rows = [[`${fmt(c.price)} × ${days} day${days > 1 ? 's' : ''}`, c.price * days]];
+      if (discount(days)) rows.push(['Weekly discount (10%)', -Math.round(c.price * days * discount(days))]);
+      EXTRAS.filter(x => current.extras.has(x.id)).forEach(x => rows.push([`${x.name} × ${days}`, x.perDay * days]));
+      const pick = LOCS.find(l => l.id === $('#pickupLoc').value), drop = LOCS.find(l => l.id === $('#dropLoc').value);
+      if (pick.id === 'hotel' && days < 5) rows.push(['Hotel delivery', DELIVERY_FEE]);
+      if (pick.region !== drop.region && pick.region !== 'any' && drop.region !== 'any') rows.push(['One-way fee', ONE_WAY_FEE]);
+      if (!$('#fAge').checked) rows.push(['Young driver fee (under 25)', 300 * days]);
+      return { rows, total: rows.reduce((s, r) => s + r[1], 0) };
+    }
+    function renderBreakdown() {
+      const q = quote();
+      $('#breakdown').innerHTML = q.rows.map(r => `<div class="row"><span>${r[0]}</span><span>${r[1] < 0 ? '−' : ''}${fmt(Math.abs(r[1]))}</span></div>`).join('')
+        + `<div class="row total"><span>Total</span><span>${fmt(q.total)}</span></div>`;
+    }
+
+    function confirmBooking() {
+      const name = $('#fName').value.trim(), email = $('#fEmail').value.trim(), phone = $('#fPhone').value.trim();
+      const err = !name ? 'Please enter the driver’s full name.'
+        : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Please enter a valid email address.'
+        : phone.replace(/\D/g, '').length < 7 ? 'Please enter a phone number we can reach you on.'
+        : (current.car.cat === 'premium' && !$('#fAge').checked) ? 'Premium cars need a main driver aged 25 or over.'
+        : '';
+      $('#formError').textContent = err;
+      if (err) return;
+      const ref = 'SM-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+      const total = quote().total;
+      modal.innerHTML = `
+        <div class="modal-head"><h3>Booking confirmed</h3><button class="close" data-close aria-label="Close">×</button></div>
+        <div class="success">
+          <div class="tick"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg></div>
+          <h3>You're all set, ${name.split(' ')[0]}!</h3>
+          <div class="ref">${ref}</div>
+          <p>${current.car.name} from ${locName($('#pickupLoc').value)} on ${prettyDate($('#pickDate').value, $('#pickTime').value)}.<br>Total due at pick-up: <strong style="color:var(--text)">${fmt(total)}</strong></p>
+          <p style="margin-top:10px;font-size:.85rem">This is a demo page, so no email is sent.</p>
+          <button class="btn btn-dark" data-close style="margin-top:20px">Done</button>
+        </div>`;
+    }
+
+    function closeModal() { overlay.classList.remove('open'); document.body.style.overflow = ''; }
+    overlay.addEventListener('click', e => { if (e.target === overlay || e.target.closest('[data-close]')) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+    let toastTimer;
+    function toast(msg) {
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    updateDuration();
+  </script>
+</body>
+</html>
